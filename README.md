@@ -2,8 +2,8 @@
 
 **R** code to compute kernel correlation with examples and applications.
 
-> **Authors:** Marta Catalano, Hugo Lavenant, Francesco Mascari
-> **Corresponding author:** Francesco Mascari, [francesco.mascari@phd.unibocconi.it](mailto:francesco.mascari@phd.unibocconi.it)
+**Authors:** Marta Catalano, Hugo Lavenant, Francesco Mascari
+**Corresponding author:** Francesco Mascari, [francesco.mascari@phd.unibocconi.it](mailto:francesco.mascari@phd.unibocconi.it)
 
 
 ## Overview
