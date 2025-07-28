@@ -29,7 +29,7 @@ The abstract of the manuscript is reported below:
 
 
 ## Scripts for simulations
-`script/` contains all **R** scripts to perform simulations.
+`scripts/` contains all **R** scripts to perform simulations.
 | File                    | Purpose                              |
 | ----------------------- | ------------------------------------ |
 | `scripts/01_load.R`     | Loads and inspects raw data          |
