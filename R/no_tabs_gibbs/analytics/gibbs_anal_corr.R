@@ -133,20 +133,12 @@ hDP_corr_analytics <- function(
       # third component of the variance for group 2
       V2_3 <- n2^2/((c + n2 + 1)*(c + n2)^2)*(int_diag_custs2 - int_cross_custs2)
       
-      # pre-allocate the values of the values for which we have to integrate out the tables
+      # pre-allocate the values for which we have to integrate out the tables
       V0_1 <- 0
       V1_1 <- 0
       V1_2 <- 0
       V2_1 <- 0
       V2_2 <- 0
-      
-      cov <- 0
-      valc0sq <- 0
-      valc0 <- 0
-      valc0l <- 0
-      vall <- 0
-      vallsq <- 0
-      vall_vec <- 0
       
       for (. in seq_len(R)) { # Gibbs iterations
 
@@ -154,13 +146,16 @@ hDP_corr_analytics <- function(
         l_vec <- sapply(seen_q1_mat,length) + sapply(seen_q2_mat,length)
         l_tot <- sum(l_vec) # total number of tables across both groups
 
-        # store the vector W
+        # store the vector of weights W and build its mean value
         W0 <- c0/(c0+l_tot)
         W_vec <- l_vec/(c0+l_tot)
+        mean_W0 <- mean_W0 + W0/R
+        mean_W_vec <- mean_W_vec + W_vec/R
 
-        
+        # first component of the posterior variance of the baseline
         V0_1 <- V0_1 + (W0*int_diag_baseln + int_diag_tabs)/(c0 + l_tot + 1) - (1 - 1/(c0 + l_tot + 1))*(W0^2*int_cross_baseln + W0*int_cross_baseln_tabs + int_cross_tabs)
 
+        # weight
         mean_W0 <- mean_W0 + W0/R
         mean_W_vec <- mean_W_vec + W_vec/R
         
@@ -240,11 +235,14 @@ hDP_corr_analytics <- function(
     # according to the mean frequency of the tables across both groups in y
     int_cross_baseln_mean_tabs <- sum(colSums(outer_mat_baseln_dishes)*mean_W_vec)/M
 
+    # second component of the variance of the baseline
     V0_2 <- mean_W0^2*int_cross_baseln + mean_W0*int_cross_baseln_mean_tabs + int_cross_mean_tabs
     
+    # variances of the two groups
     var1 <- V1_1 + V1_2 + V1_3 + c^2/(c + n1)^2*(V0_1 - V0_2)
     var2 <- V2_1 + V2_2 + V2_3 + c^2/(c + n2)^2*(V0_1 - V0_2)
 
+    # covariance
     cov <- c^2/((c + n1)*(c + n2))*(V0_1 - V0_2)
     
     return(cov/sqrt(var1*var2))
