@@ -1,10 +1,13 @@
-gibbs_smpl_corr <- function(
-  baseln = runif,
-  M = 10000,
-  c = 1,
-  c0 = 1,
-  seen = matrix(numeric(0),ncol = 3,dimnames = list(NULL,c("X", "Ncusts1", "Ncusts2"))),
-  ...){
+hdp_corr_smpl <- function(
+    baseln = runif,
+    M = 10000,
+    c = 1,
+    c0 = 1,
+    seen = matrix(numeric(0),
+                  ncol = 3,
+                  dimnames = list(NULL,c("X", "Ncusts1", "Ncusts2"))),
+    ...) {
+    
     X_vec <- seen[,1]
   
     n1_vec <- seen[,2]
