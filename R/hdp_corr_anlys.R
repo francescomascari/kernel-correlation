@@ -29,7 +29,7 @@ hdp_corr_anlys <- function(
   #   R           : integer – number of runs of the Gibbs sampler to
   #                           integrate out the tables.
   #
-  #   bsln      : function – baseline measure generator (default `runif`).
+  #   bsln        : function – baseline measure generator (default `runif`).
   #
   #   M           : integer – size of the sample from the baseline measure.
   #
@@ -139,7 +139,7 @@ hdp_corr_anlys <- function(
   V2_1 <- 0
   V2_2 <- 0
 
-  # assign one table per each customer for each group
+  # initialize by assigning one table per each customer for each group
   seen_q1_mat <- lapply(n1_vec, FUN = function(times) {rep(1, times)})
   seen_q2_mat <- lapply(n2_vec, FUN = function(times) {rep(1, times)})
 
