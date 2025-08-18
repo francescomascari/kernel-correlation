@@ -2,8 +2,8 @@ update_q_probs <- function(
     q_vec_k,
     l_tot,
     l_k,
-    c = 1,
-    c0 = 1) {
+    c0 = 1,
+    c = 1) {
   # ---------------------------------------------------------------------------
   # Compute the un-normalized probabilities for the distribution of one customer
   # across the tables for the same dish, given the other customers' allocations.

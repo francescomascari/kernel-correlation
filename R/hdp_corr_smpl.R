@@ -69,7 +69,7 @@ hdp_corr_smpl <- function(
     seen_full <- cbind(seen, "Ntabs" = l_vec)
 
     # generate the 2x2 observations from the model with given `seen_full`
-    joint_vals <- hDP_X2_mat_data(2, 2, seen = seen_full, smpl_method = "alt", start = 1, c0 = c0, c = c, P00 = bsln)$new_X
+    joint_vals <- hdp_sampler(2, 2, seen = seen_full, smpl_method = "alt", start = 1, c0 = c0, c = c, P00 = bsln)$new_X
 
     # store the sampled values accordingly
     X11_vals <- c(X11_vals,joint_vals[joint_vals[, "group"] == 1, 1][1])
