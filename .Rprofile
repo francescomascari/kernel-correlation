@@ -10,6 +10,9 @@ require("extrafont")
 ## FROM HIERARCHICAL DIRICHLET PROCESS
 source("R/hdp_mat_sampler_help.R")
 source("R/hdp_mat_sampler.R")
+source("R/hdp_XT_sampler_help.R")
+source("R/hdp_XT_sampler.R")
+
 
 ## HELPER FUNCTIONS FOR COMPUTATIONS
 source("R/do_outer_mat.R")
