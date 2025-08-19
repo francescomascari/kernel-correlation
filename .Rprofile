@@ -12,6 +12,7 @@ source("R/hdp_mat_sampler_help.R")
 source("R/hdp_mat_sampler.R")
 source("R/hdp_XT_sampler_help.R")
 source("R/hdp_XT_sampler.R")
+source("R/hdp_XT2mat.R")
 
 
 ## HELPER FUNCTIONS FOR COMPUTATIONS

@@ -63,10 +63,10 @@ hdp_XT_sampler <- function(
 
   if (smpl_method == "block") { # if the sampling method is "block"
     # sample all values from the first group
-    seen_XT2 <- hdp_XT_sampler_help(n_1st, group_indx = indx_1st, seen = seen_XT2, c0 = c0, c = c,P00 = P00)
+    seen_XT <- hdp_XT_sampler_help(n_1st, group_indx = indx_1st, seen_XT = seen_XT, c0 = c0, c = c, P00 = P00)
 
     # sample all values from the second group
-    seen_XT2 <- hdp_XT_sampler_help(n_2nd, group_indx = indx_2nd, seen = seen_XT2, c0 = c0, c = c,P00 = P00)
+    seen_XT <- hdp_XT_sampler_help(n_2nd, group_indx = indx_2nd, seen_XT = seen_XT, c0 = c0, c = c, P00 = P00)
   } else if (smpl_method == "alt") { # if the sampling method is "alt"
 
     n_min <- min(n1, n2) # minimal number of values to sample
@@ -74,14 +74,14 @@ hdp_XT_sampler <- function(
     max_indx <- which.max(c(n1, n2)) # group corresponding to the maximal number of values to samples
     for (k in seq_len(n_min)) { # until we have to sample from both groups
       # sample one value from the first group
-      seen_XT2 <- hdp_XT_sampler_help(1,group_indx = indx_1st, seen = seen_XT2, c0 = c0, c = c,P00 = P00)
+      seen_XT <- hdp_XT_sampler_help(1, group_indx = indx_1st, seen_XT = seen_XT, c0 = c0, c = c, P00 = P00)
 
       # sample one value from the second group
-      seen_XT2 <- hdp_XT_sampler_help(1,group_indx = indx_2nd, seen = seen_XT2, c0 = c0, c = c,P00 = P00)
+      seen_XT <- hdp_XT_sampler_help(1, group_indx = indx_2nd, seen_XT = seen_XT, c0 = c0, c = c, P00 = P00)
     }
 
     # sample the remaining values from the group corresponding to the maximal number
-    seen_XT2 <- hdp_XT_sampler_help(n_max - n_min,group_indx = max_indx, seen = seen_XT2, c0 = c0, c = c,P00 = P00)
+    seen_XT <- hdp_XT_sampler_help(n_max - n_min, group_indx = max_indx, seen_XT = seen_XT, c0 = c0, c = c, P00 = P00)
   }
-  return(seen_XT2)
+  return(seen_XT)
 }

@@ -34,7 +34,7 @@ hdp_mat_sampler <- function(
   #                   X        – unique sampled values
   #                   Ncusts1  – frequency in group 1
   #                   Ncusts2  – frequency in group 2
-  #                   Ntabs    – number of tables across the 
+  #                   Ntabs    – number of tables across restaurants
   #                 If empty (default), sampling is unconditional.
   #
   #   c0, c       : numeric – concentration parameters of the HDP.

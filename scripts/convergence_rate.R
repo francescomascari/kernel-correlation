@@ -4,14 +4,14 @@ if (TRUE) {
   N_vec <- 4^c(2,3,4,5)
   max_N <- max(N_vec)
   
-  M_vec <-5^c(2,3,4,5)
+  M_vec <- 5^c(2,3,4,5)
   max_M <- max(M_vec)
   
   set.seed(1234)
-  seen <- hDP_XT2(n1=max_N,n2=max_M,smpl_method = "alt",start = 1,c0=1,c=1,P00=runif)
+  seen <- hdp_XT_sampler(n1=max_N,n2=max_M,smpl_method = "alt",start = 1,c0=1,c=1,P00=runif)
   
   kernel_vec <- c("gaussian","laplace","setwise","linear")
-  par_k = list(sigma = 1, beta = 1, set_left_lim = 0,set_right_lim = 0.95)
+  par_k = list(sigma = 1, beta = 1, left_lim = 0, right_lim = 0.95)
   
   
   val_mat <- expand.grid(N=N_vec,M=M_vec)
@@ -36,7 +36,7 @@ if (TRUE) {
     M <- val_mat$M[i]
     
     seen_now <- rbind(seen[1:N,],seen[(max_N+1):(max_N+M),])
-    seen_now_mat <- hDP_XT2_to_mat(seen_now)[,c(1,3,4)]
+    seen_now_mat <- hDP_XT2mat(seen_now)[,c("X", "Ncusts1", "Ncusts2")]
     
     for (k in kernel_vec) {
       sum_vals <- foreach(i = seq_len(reps), .combine = sum, .inorder = FALSE, .export = c("do_outer_mat","quad.form","quad.3form","logSumExp","update_q_probs","gibbs_tabs","hdp_corr_anlys")) %dopar%
@@ -46,7 +46,7 @@ if (TRUE) {
   }
   stopImplicitCluster()
   
-  save(val_mat,file = "output/convergence_rate.RData")
+  save(val_mat, file = "output/results/convergence_rate.RData")
 } else {
   load("output/convergence_rate.RData")
 }
