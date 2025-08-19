@@ -1,17 +1,17 @@
-hdp_sampler <- function(
+hdp_mat_sampler <- function(
     n1,
     n2,
     smpl_method = "block",
     start = 1,
-    seen = matrix(numeric(0),
-                  ncol = 4,
-                  dimnames = list(NULL, c("X", "Ncusts1", "Ncusts2", "Ntabs"))),
+    seen_mat = matrix(numeric(0),
+                      ncol = 4,
+                      dimnames = list(NULL, c("X", "Ncusts1", "Ncusts2", "Ntabs"))),
     c0 = 1,
     c = 1,
     P00 = runif) {
   # ---------------------------------------------------------------------------
   # Sample n1 and n2 observations from a two-group hierarchical DP (HDP) model.
-  # If `seen` is supplied, draws are conditional on the counts in that matrix.
+  # If `seen_mat` is supplied, draws are conditional on the counts in that matrix.
   # The augmented model with tables is used.
   # ---------------------------------------------------------------------------
   #
@@ -29,7 +29,7 @@ hdp_sampler <- function(
   #
   #   start       : integer (1 or 2) – group to draw the first observation from.
   #
-  #   seen        : numeric matrix with columns,
+  #   seen_mat    : numeric matrix with columns,
   #                 (using the restaurant franchise metaphor)
   #                   X        – unique sampled values
   #                   Ncusts1  – frequency in group 1
@@ -43,7 +43,7 @@ hdp_sampler <- function(
   #
   # Returns
   #   list(
-  #     seen   = updated `seen` matrix (same column structure as above),
+  #     seen_mat   = updated `seen_mat` matrix (same column structure as above),
   #     new_X  = matrix of newly sampled rows with columns:
   #                X     – sampled value
   #                group – group index (1 or 2)
@@ -71,13 +71,13 @@ hdp_sampler <- function(
   if (smpl_method == "block") { # if the sampling method is "block"
 
     # sample all values from the first group
-    group1_updt <- hdp_sampler_help(n_1st, group_indx = indx_1st, seen = seen, c0 = c0, c = c, P00 = P00)
-    seen <- group1_updt$seen
+    group1_updt <- hdp_mat_sampler_help(n_1st, group_indx = indx_1st, seen_mat = seen_mat, c0 = c0, c = c, P00 = P00)
+    seen_mat <- group1_updt$seen_mat
     new_X <- rbind(new_X, group1_updt$new_X)
 
     # sample all values from the second group
-    group2_updt <- hdp_sampler_help(n_2nd, group_indx = indx_2nd, seen = seen, c0 = c0, c = c, P00 = P00)
-    seen <- group2_updt$seen
+    group2_updt <- hdp_mat_sampler_help(n_2nd, group_indx = indx_2nd, seen_mat = seen_mat, c0 = c0, c = c, P00 = P00)
+    seen_mat <- group2_updt$seen_mat
     new_X <- rbind(new_X, group2_updt$new_X)
   } else if (smpl_method == "alt") { # if the sampling method is "alt"
 
@@ -86,21 +86,22 @@ hdp_sampler <- function(
     max_indx <- which.max(c(n1, n2)) # group corresponding to the maximal number of values to samples
 
     for (k in seq_len(n_min)) { # until we have to sample from both groups
+      
       # sample one value from the first group
-      group1_updt <- hdp_sampler_help(1, group_indx = indx_1st, seen = seen, c0 = c0, c = c, P00 = P00)
-      seen <- group1_updt$seen
+      group1_updt <- hdp_mat_sampler_help(1, group_indx = indx_1st, seen_mat = seen_mat, c0 = c0, c = c, P00 = P00)
+      seen_mat <- group1_updt$seen_mat
       new_X <- rbind(new_X, group1_updt$new_X)
 
       # sample one value from the second group
-      group2_updt <- hdp_sampler_help(1, group_indx = indx_2nd, seen = seen, c0 = c0, c = c, P00 = P00)
-      seen <- group2_updt$seen
+      group2_updt <- hdp_mat_sampler_help(1, group_indx = indx_2nd, seen_mat = seen_mat, c0 = c0, c = c, P00 = P00)
+      seen_mat <- group2_updt$seen_mat
       new_X <- rbind(new_X, group2_updt$new_X)
     }
 
     # sample the remaining values from the group corresponding to the maximal number
-    last_updt <- hdp_sampler_help(n_max - n_min, group_indx = max_indx, seen = seen, c0 = c0, c = c, P00 = P00)
-    seen <- last_updt$seen
+    last_updt <- hdp_mat_sampler_help(n_max - n_min, group_indx = max_indx, seen_mat = seen_mat, c0 = c0, c = c, P00 = P00)
+    seen_mat <- last_updt$seen_mat
     new_X <- rbind(new_X, last_updt$new_X)
   }
-  return(list(seen = seen, new_X = new_X))
+  return(list(seen_mat = seen_mat, new_X = new_X))
 }

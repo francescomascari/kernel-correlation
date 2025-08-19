@@ -1,5 +1,5 @@
 #### Generate data ####
-if (FALSE) {
+if (TRUE) {
   
   N_vec <- 4^c(2,3,4,5)
   max_N <- max(N_vec)
@@ -8,7 +8,7 @@ if (FALSE) {
   max_M <- max(M_vec)
   
   set.seed(1234)
-  seen <- hDP_XT2(n1=max_N,n2=max_M,P00=runif,smpl_method = "alt",start = 1,c0=1,c=1)
+  seen <- hDP_XT2(n1=max_N,n2=max_M,smpl_method = "alt",start = 1,c0=1,c=1,P00=runif)
   
   kernel_vec <- c("gaussian","laplace","setwise","linear")
   par_k = list(sigma = 1, beta = 1, set_left_lim = 0,set_right_lim = 0.95)
@@ -39,16 +39,16 @@ if (FALSE) {
     seen_now_mat <- hDP_XT2_to_mat(seen_now)[,c(1,3,4)]
     
     for (k in kernel_vec) {
-      sum_vals <- foreach(i = seq_len(reps), .combine = sum, .inorder = FALSE, .export = c("do_outer_mat","do_diag_vec","quad.form","quad.3form","hDP_var_help_int_tabs","hDP_cov_help_int_tabs","logSumExp","update_q_probs","gibbs_tabs","gibbs_smpl_corr")) %dopar%
-      {gibbs_anal_corr(N_baseln=N_baseln,seen = seen_now_mat,baseln=runif,c0=1,c=1,kernel = k,par_k = par_k)}
+      sum_vals <- foreach(i = seq_len(reps), .combine = sum, .inorder = FALSE, .export = c("do_outer_mat","quad.form","quad.3form","logSumExp","update_q_probs","gibbs_tabs","hdp_corr_anlys")) %dopar%
+      {hdp_corr_anlys(N_baseln=N_baseln,seen = seen_now_mat,baseln=runif,c0=1,c=1,kernel = k,par_k = par_k)}
       val_mat[i,k] <- sum_vals/reps
     }
   }
   stopImplicitCluster()
   
-  save(val_mat,file = "simulations/convergence_rate/convergence_rate.RData")
+  save(val_mat,file = "output/convergence_rate.RData")
 } else {
-  load("simulations/convergence_rate/convergence_rate.RData")
+  load("output/convergence_rate.RData")
 }
 
 lm_data <- data.frame(slope = rep(NA,4),p.val = rep(NA,4),r.sq = rep(NA,4))

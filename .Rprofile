@@ -8,8 +8,8 @@ require("extrafont")
 
 ## HELPER FUNCTIONS FOR SAMPLING
 ## FROM HIERARCHICAL DIRICHLET PROCESS
-source("R/hdp_sampler_help.R")
-source("R/hdp_sampler.R")
+source("R/hdp_mat_sampler_help.R")
+source("R/hdp_mat_sampler.R")
 
 ## HELPER FUNCTIONS FOR COMPUTATIONS
 source("R/do_outer_mat.R")
