@@ -1,9 +1,9 @@
 #source("renv/activate.R")
 
-require("jsonlite")
-require("tidyverse")
-require("emulator")
-require("matrixStats")
+#require("jsonlite")
+#require("tidyverse")
+require("emulator", include.only = c("quad.form", "quad.3form"))
+require("matrixStats", include.only = "logSumExp")
 require("extrafont")
 
 ## HELPER FUNCTIONS FOR SAMPLING

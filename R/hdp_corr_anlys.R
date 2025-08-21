@@ -200,7 +200,7 @@ hdp_corr_anlys <- function(
 
     # first and second components of the variance for group 1
     V1_1 <- V1_1 + c^2 / ((c + n1 + 1) * (c + n1)^2) * (1 - 1 / (c0 + l_tot + 1)) * ((W0 * int_diag_bsln + int_diag_tabs) - (W0^2 * int_cross_bsln + 2 * W0 * int_cross_bsln_tabs + int_cross_tabs))
-    V1_2 <- V1_2 + c * n1 / ((c + n1 + 1) * (c + n1)^2) * ((W0 * int_diag_bsln + int_diag_tabs + int_diag_custs1) - (W0 * int_cross_bsln_custs1 + int_cross_tabs_custs1))
+    V1_2 <- V1_2 + c * n1 / ((c + n1 + 1) * (c + n1)^2) * ((W0 * int_diag_bsln + int_diag_tabs + int_diag_custs1) - 2 * (W0 * int_cross_bsln_custs1 + int_cross_tabs_custs1))
 
     # if at least one customer in group 2
     if (n2 != 0) {
@@ -220,7 +220,7 @@ hdp_corr_anlys <- function(
 
     # first and second components of the variance for group 2
     V2_1 <- V2_1 + c^2 / ((c + n2 + 1) * (c + n2)^2) * (1 - 1 / (c0 + l_tot + 1)) * ((W0 * int_diag_bsln + int_diag_tabs) - (W0^2 * int_cross_bsln + 2 * W0 * int_cross_bsln_tabs + int_cross_tabs))
-    V2_2 <- V2_2 + c * n2 / ((c + n2 + 1) * (c + n2)^2) * ((W0 * int_diag_bsln + int_diag_tabs + int_diag_custs2) - (W0 * int_cross_bsln_custs2 + int_cross_tabs_custs2))
+    V2_2 <- V2_2 + c * n2 / ((c + n2 + 1) * (c + n2)^2) * ((W0 * int_diag_bsln + int_diag_tabs + int_diag_custs2) - 2 * (W0 * int_cross_bsln_custs2 + int_cross_tabs_custs2))
 
     # Gibbs update
     # if at least one group has some values
@@ -262,11 +262,7 @@ hdp_corr_anlys <- function(
 
   # covariance
   cov <- c^2 / ((c + n1) * (c + n2)) * (V0_1 / R - V0_2)
-  core_mat <- outer_mat_bsln
-  diag(core_mat) <- 0
-  core <- 1 - mean(core_mat)
-  print(1 - core)
-  print(c((1 + c + c0) / ((1 + c) * (1 + c0)), 1 / (1 + c0)) * core)
+
   print(c(var1, var2, cov))
 
   return(cov / sqrt(var1 * var2))

@@ -15,7 +15,7 @@ if (TRUE) {
   
   
   val_mat <- expand.grid(N=N_vec,M=M_vec)
-  val_mat$gaussian<- NA
+  val_mat$gaussian <- NA
   val_mat$laplace <- NA
   val_mat$setwise <- NA
   val_mat$linear <- NA
@@ -35,13 +35,13 @@ if (TRUE) {
     N <- val_mat$N[i]
     M <- val_mat$M[i]
     
-    seen_now <- rbind(seen[1:N,],seen[(max_N+1):(max_N+M),])
-    seen_now_mat <- hDP_XT2mat(seen_now)[,c("X", "Ncusts1", "Ncusts2")]
+    seen_now <- rbind(seen[seen[, "group"] == 1, ][1:N,],seen[seen[, "group"] == 2, ][1:M,])
+    seen_now_mat <- hdp_XT2mat(seen_now)[, c("X", "Ncusts1", "Ncusts2")]
     
     for (k in kernel_vec) {
       sum_vals <- foreach(i = seq_len(reps), .combine = sum, .inorder = FALSE, .export = c("do_outer_mat","quad.form","quad.3form","logSumExp","update_q_probs","gibbs_tabs","hdp_corr_anlys")) %dopar%
-      {hdp_corr_anlys(N_baseln=N_baseln,seen = seen_now_mat,baseln=runif,c0=1,c=1,kernel = k,par_k = par_k)}
-      val_mat[i,k] <- sum_vals/reps
+      {hdp_corr_anlys(seen = seen_now_mat, c0 = 1, c = 1, R = 1000, bsln=runif, M = 10000, kernel = k, par_k = par_k)}
+      val_mat[i, k] <- sum_vals / reps
     }
   }
   stopImplicitCluster()

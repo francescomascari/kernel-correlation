@@ -47,7 +47,7 @@ do_outer_mat <- function(
 
     # compute the indicator functions for `vals1` and `vals2`
     ind1 <- (par_k$left_lim <= vals1) * (vals1 <= par_k$right_lim)
-    ind2 <- (par_k$left_lim <= vals1) * (vals1 <= par_k$right_lim)
+    ind2 <- (par_k$left_lim <= vals2) * (vals2 <= par_k$right_lim)
 
     # build the matrix with the corresponding kernel
     quad_mat <- outer(ind1, ind2)
