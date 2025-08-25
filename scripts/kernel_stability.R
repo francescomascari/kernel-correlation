@@ -21,6 +21,9 @@ write.csv(seen, file = "output/results/kernel_stability_seen.csv", row.names = F
 
 ## PART 2: Computation of kernel correlation
 
+# import the `seen` matrix from the previous step
+seen <- as.matrix(read.csv("output/results/kernel_stability_seen.csv"))
+
 # inizialize the the matrix to store the values of the kernel correlation?
 val_mat <- data.frame(n1 = n_all, n2 = n_all)
 val_mat$gaussian1 <- NA
