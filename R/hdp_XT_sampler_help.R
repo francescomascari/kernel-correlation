@@ -47,8 +47,8 @@ hdp_XT_sampler_help <- function(
   row_seen <- nrow(seen_XT) # number of rows
 
   # create a matrix without duplicated tables
-  #unique_seen_XT <- matrix(seen_XT[!duplicated(seen_XT[,"T"]), c("X","T")], ncol = 2, dimnames = list(NULL, c("X", "T")))
-  unique_seen_XT <- seen_XT[!duplicated(seen_XT[,"T"]), c("X","T")]
+  # unique_seen_XT <- matrix(seen_XT[!duplicated(seen_XT[,"T"]), c("X","T")], ncol = 2, dimnames = list(NULL, c("X", "T")))
+  unique_seen_XT <- seen_XT[!duplicated(seen_XT[, "T"]), c("X", "T"), drop = FALSE]
   n_tabs <- length(unique_seen_XT) # number of tables
   n_custs <- sum(seen_XT[, "group"] == group_indx) # number of costumers
 

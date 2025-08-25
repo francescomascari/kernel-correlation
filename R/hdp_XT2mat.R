@@ -23,11 +23,11 @@ hdp_XT2mat <- function(seen_XT) {
   X <- unique(seen_XT[, "X"])
 
   # store the number of tables per dish
-  Ntabs <- sapply(X, function(val) {length(unique(seen_XT[seen_XT[, "X"] == val, "T"]))})
+  Ntabs <- as.numeric(sapply(X, function(val) {length(unique(seen_XT[seen_XT[, "X"] == val, "T"]))}))
 
   # store the number of customers per dish per restaurant
-  Ncusts1 <- sapply(X, function(val) {sum(seen_XT[seen_XT[,"group"] == 1, "X"] == val)})
-  Ncusts2 <- sapply(X, function(val) {sum(seen_XT[seen_XT[,"group"] == 2, "X"] == val)})
+  Ncusts1 <- as.numeric(sapply(X, function(val) {sum(seen_XT[seen_XT[,"group"] == 1, "X"] == val)}))
+  Ncusts2 <- as.numeric(sapply(X, function(val) {sum(seen_XT[seen_XT[,"group"] == 2, "X"] == val)}))
 
   return(data.frame(X = X, Ntabs = Ntabs, Ncusts1 = Ncusts1, Ncusts2 = Ncusts2))
 }
