@@ -1,91 +1,136 @@
-#### Generate data ####
-if (TRUE) {
-  
-  N_vec <- 4^c(2,3,4,5)
-  max_N <- max(N_vec)
-  
-  M_vec <- 5^c(2,3,4,5)
-  max_M <- max(M_vec)
-  
-  set.seed(1234)
-  seen <- hdp_XT_sampler(n1=max_N,n2=max_M,smpl_method = "alt",start = 1,c0=1,c=1,P00=runif)
-  
-  kernel_vec <- c("gaussian","laplace","setwise","linear")
-  par_k = list(sigma = 1, beta = 1, left_lim = 0, right_lim = 0.95)
-  
-  
-  val_mat <- expand.grid(N=N_vec,M=M_vec)
-  val_mat$gaussian <- NA
-  val_mat$laplace <- NA
-  val_mat$setwise <- NA
-  val_mat$linear <- NA
-  
-  
-  require("doParallel")
-  n_Cores <- detectCores()
-  cluster <- makeCluster(n_Cores-1)
-  registerDoParallel(cluster)
-  
-  
-  N_baseln <-10000
-  reps <- 10
-  
-  nrow_mat <- length(N_vec)*length(M_vec)
-  for (i in 1:nrow_mat) {
-    N <- val_mat$N[i]
-    M <- val_mat$M[i]
-    
-    seen_now <- rbind(seen[seen[, "group"] == 1, ][1:N,],seen[seen[, "group"] == 2, ][1:M,])
-    seen_now_mat <- hdp_XT2mat(seen_now)[, c("X", "Ncusts1", "Ncusts2")]
-    
-    for (k in kernel_vec) {
-      sum_vals <- foreach(i = seq_len(reps), .combine = sum, .inorder = FALSE, .export = c("do_outer_mat","quad.form","quad.3form","logSumExp","update_q_probs","gibbs_tabs","hdp_corr_anlys")) %dopar%
-      {hdp_corr_anlys(seen = seen_now_mat, c0 = 1, c = 1, R = 1000, bsln=runif, M = 10000, kernel = k, par_k = par_k)}
-      val_mat[i, k] <- sum_vals / reps
-    }
+## PART 1: Data generation
+
+# store all the different sample sizes for group 1
+# and record the maximal
+n1_all <- 4^c(2, 3, 4, 5)
+n1_max <- max(n1_all)
+
+# store all the different sample sizes for group 2
+# and record the maximal
+n2_all <- 5^c(2, 3, 4, 5)
+n2_max <- max(n2_all)
+
+# store the total number of cases
+cases <- length(n1_all) * length(n2_all)
+
+# set the seed for reproducibility
+set.seed(1234)
+
+# generate all the data up to the maximal sample sixes
+# for both groups
+seen <- hdp_XT_sampler(n1 = n1_max, n2 = n2_max, smpl_method = "alt", start = 1, c0 = 1, c = 1, P00 = runif)
+
+# save the data matrix
+write.csv(seen, file = "output/results/convergence_rate_seen.csv", row.names = FALSE)
+
+
+## PART 2: Computation of kernel correlation
+
+# import the `seen` matrix from the previous step
+seen <- as.matrix(read.csv("output/results/convergence_rate_seen.csv"))
+
+# store the list of kernels under examination
+# and their parameters
+kernel_vec <- c("gaussian", "laplace", "setwise", "linear")
+par_k <- list(sigma = 1, beta = 1, left_lim = 0, right_lim = 0.95)
+
+# inizialize the matrix to store the values of the kernel correlation
+val_mat <- expand.grid(n1 = n1_all, n2 = n2_all)
+val_mat$gaussian <- NA
+val_mat$laplace <- NA
+val_mat$setwise <- NA
+val_mat$linear <- NA
+
+# start parallelization
+require("doParallel")
+n_cores <- detectCores()
+cluster <- makeCluster(n_Cores - 1)
+registerDoParallel(cluster)
+
+# set the number of repetitions to average the result on
+reps <- 10
+
+# for every case under study: each row of `val_mat``
+for (i in seq_len(cases)) {
+  # store the sample sizes under investigation
+  n1 <- val_mat$n1[i]
+  n2 <- val_mat$n2[i]
+
+  # select the first `n1` observations from group 1
+  # and the first `n2` observations from group 2
+  seen_now <- rbind(seen[seen[, "group"] == 1, ][1:n1, ], seen[seen[, "group"] == 2, ][1:n2, ])
+  # convert the observed data into the right format
+  # for the `hdp_corr_anlys` function
+  seen_now_mat <- hdp_XT2mat(seen_now)[, c("X", "Ncusts1", "Ncusts2")]
+
+  # for every kernel under investigation
+  for (k in kernel_vec) {
+    # compute the kernel correlation `reps` times in parallel
+    # and sum the realizations over the runs
+    sum_vals <- foreach(i = seq_len(reps), .combine = sum, .inorder = FALSE, .export = c("do_outer_mat","quad.form","quad.3form","logSumExp","update_q_probs","gibbs_tabs","hdp_corr_anlys")) %dopar%
+    {hdp_corr_anlys(seen = seen_now_mat, c0 = 1, c = 1, R = 1000, bsln=runif, M = 10000, kernel = k, par_k = par_k)}
+
+    # store the mean value of the kernel correlation
+    # across all the `reps` repetitions
+    val_mat[i, k] <- sum_vals / reps
   }
-  stopImplicitCluster()
-  
-  save(val_mat, file = "output/results/convergence_rate.RData")
-} else {
-  load("output/convergence_rate.RData")
 }
 
-lm_data <- data.frame(slope = rep(NA,4),p.val = rep(NA,4),r.sq = rep(NA,4))
-rownames(lm_data) <- c("Gaussian","Laplace","Setwise","Linear")
+# end parallelization
+stopImplicitCluster()
 
-for(k in kernel_vec <- c("Gaussian","Laplace","Setwise","Linear")){
-  model_lm <- lm(log(corr) ~ log(NM),data=dplyr::filter(my_mat,kernel==k))
-  lm_data[k,] <- c(summary(model_lm)$coefficients["log(NM)",c(1,4)],summary(model_lm)$r.squared)
-}
+# save the matrix with kernel correlation values
+write.csv(val_mat, file = "output/results/convergence_rate_val_mat.csv", row.names = FALSE)
 
-save(lm_data,file = "simulations/convergence_rate/convergence_rate_lm_data.RData")
 
-my_mat <- rbind(val_mat[,1:2],val_mat[,1:2],val_mat[,1:2],val_mat[,1:2])
-my_mat$corr <- c(val_mat$gaussian,val_mat$laplace,val_mat$linear,val_mat$setwise)
-my_mat$kernel <- as.factor(c(rep("Gaussian",16),rep("Laplace",16),rep("Linear",16),rep("Setwise",16)))
-my_mat$NM <- my_mat$N*my_mat$M
+## PART 3: Log-log plot for convergence rate
 
-my_new_mat <- my_mat %>%
+# import the `val_mat` matrix from the previous step as a data frame
+val_mat <- read.csv("output/results/convergence_rate_val_mat.csv")
+
+# pivot `val_mat` matrix to obtain a ggplot-friendly matrix
+plot_mat <- pivot_longer(val_mat, cols = all_of(kernel_vec), names_to = "kernel", values_to = "corr") %>%
+  # save the value of `n1 * n2` as a new column
+  mutate(n1_n2 = n1 * n2) %>%
+  # group it by `kernel`
   group_by(kernel) %>%
-  mutate(corr.smooth = exp(predict(lm(log(corr) ~ log(NM)))))
+  # fit a linear model to infer the trend of the log correlation
+  # with respect to the log of `n1 * n2`
+  mutate(corr.smooth = exp(predict(lm(log(corr) ~ log(n1_n2)))))
 
-loadfonts()
-ggplot(data = my_new_mat)+ 
-  scale_x_continuous(trans='log10') +
-  scale_y_continuous(trans='log10') +
-  geom_line(aes(x = N*M, y = corr.smooth,color = kernel),linewidth = 2) +
-  geom_point(aes(x = N*M, y = corr,color = kernel, shape = kernel),size = 6) +
-  #geom_point(aes(x = N*M, y = corr.smooth,color = kernel, shape = kernel),width = 2,size = 5) +
-  labs(x = bquote(bold(n[1]*n[2])), y = "Correlation") +
-  scale_color_manual(values = c("Gaussian"="purple3", "Laplace"="darkorange3","Linear"="lightgreen","Setwise"="cyan3")) + # associate each value of fill to a color
-  scale_shape_manual(values = c("Gaussian"=15, "Laplace"=16,"Linear"=18,"Setwise"=17)) +
+# inizialize the file to save the plot
+png("output/plots/convergence_rate_plot.png", width = 900, height = 840, units = "px", res = 72)
+
+# make a log log plot of the values of the kernel correlation vs `n1 * n2`
+ggplot(data = plot_mat) +
+  scale_x_continuous(trans = "log10") +
+  scale_y_continuous(trans = "log10") +
+  # use the results of the linear model to plot the line
+  geom_line(aes(x = n1_n2, y = corr.smooth, color = kernel), linewidth = 2) +
+  # use the actual values to plot the points
+  geom_point(aes(x = n1_n2, y = corr, color = kernel, shape = kernel), size = 6) +
+  # add axis labes
+  labs(x = bquote(bold(n[1] * n[2])), y = "Correlation") +
+  # associate each kernel value to a fill color
+  scale_color_manual(values = c("gaussian" = "purple3",
+                                "laplace" = "darkorange3",
+                                "linear" = "lightgreen",
+                                "setwise" = "cyan3"),
+                     labels = function(x) tools::toTitleCase(x)) +
+  # associate each kernel value to a shape
+  scale_shape_manual(values = c("gaussian" = 15,
+                                "laplace" = 16,
+                                "linear" = 18,
+                                "setwise" = 17),
+                     labels = function(x) tools::toTitleCase(x)) +
+  # add a theme for better readability
   theme_classic() +
-  theme(axis.title = element_text(vjust = 0, family="LM Roman 10", size = 30,face="bold"),
-        axis.text = element_text(size = 20, family="LM Roman 10", face = "bold"),
+  # set the fonts of the plot for readability
+  theme(axis.title = element_text(vjust = 0, family = "LM Roman 10", size = 30, face = "bold"),
+        axis.text = element_text(size = 20, family = "LM Roman 10", face = "bold"),
         panel.grid = element_line(size = 1.5),
-        legend.position="top",
+        legend.position = "top",
         legend.title = element_blank(),
-        legend.text = element_text(family="LM Roman 10",size=20,face="bold"))
+        legend.text = element_text(family = "LM Roman 10", size = 20, face = "bold"))
 
-  
+dev.off()
