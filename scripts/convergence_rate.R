@@ -1,4 +1,4 @@
-## PART 1: Data generation
+## PART 1 : Data generation
 
 # store all the different sample sizes for group 1
 # and record the maximal
@@ -24,7 +24,7 @@ seen <- hdp_XT_sampler(n1 = n1_max, n2 = n2_max, smpl_method = "alt", start = 1,
 write.csv(seen, file = "output/results/convergence_rate_seen.csv", row.names = FALSE)
 
 
-## PART 2: Computation of kernel correlation
+## PART 2 : Computation of kernel correlation
 
 # import the `seen` matrix from the previous step
 seen <- as.matrix(read.csv("output/results/convergence_rate_seen.csv"))
@@ -84,7 +84,7 @@ stopImplicitCluster()
 write.csv(val_mat, file = "output/results/convergence_rate_val_mat.csv", row.names = FALSE)
 
 
-## PART 3: Log-log plot for convergence rate
+## PART 3 : Log-log plot for convergence rate
 
 # import the `val_mat` matrix from the previous step as a data frame
 val_mat <- read.csv("output/results/convergence_rate_val_mat.csv")
@@ -99,7 +99,7 @@ plot_mat <- pivot_longer(val_mat, cols = all_of(kernel_vec), names_to = "kernel"
   # with respect to the log of `n1 * n2`
   mutate(corr.smooth = exp(predict(lm(log(corr) ~ log(n1_n2)))))
 
-# inizialize the file to save the plot
+# open the file to save the plot
 png("output/plots/convergence_rate_plot.png", width = 900, height = 840, units = "px", res = 72)
 
 # make a log log plot of the values of the kernel correlation vs `n1 * n2`
@@ -110,7 +110,7 @@ ggplot(data = plot_mat) +
   geom_line(aes(x = n1_n2, y = corr.smooth, color = kernel), linewidth = 2) +
   # use the actual values to plot the points
   geom_point(aes(x = n1_n2, y = corr, color = kernel, shape = kernel), size = 6) +
-  # add axis labes
+  # add axis labels
   labs(x = bquote(bold(n[1] * n[2])), y = "Correlation") +
   # associate each kernel value to a fill color
   scale_color_manual(values = c("gaussian" = "purple3",
@@ -126,7 +126,7 @@ ggplot(data = plot_mat) +
                      labels = function(x) tools::toTitleCase(x)) +
   # add a theme for better readability
   theme_classic() +
-  # set the fonts of the plot for readability
+  # set the fonts of the plot to LaTeX style
   theme(axis.title = element_text(vjust = 0, family = "LM Roman 10", size = 30, face = "bold"),
         axis.text = element_text(size = 20, family = "LM Roman 10", face = "bold"),
         panel.grid = element_line(size = 1.5),
@@ -134,4 +134,5 @@ ggplot(data = plot_mat) +
         legend.title = element_blank(),
         legend.text = element_text(family = "LM Roman 10", size = 20, face = "bold"))
 
+# close the file to save the plot
 dev.off()

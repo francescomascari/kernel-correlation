@@ -1,7 +1,7 @@
 hdp_XT2mat <- function(seen_XT) {
   # ---------------------------------------------------------------------------
   # Convert the `seen_XT` matrix into the `seen_mat` matrix,
-  # storing all the unique dish with the frequencies of tables and customers.
+  # storing all the unique dishes with the frequencies of tables and customers.
   # ---------------------------------------------------------------------------
   #
   # Arguments
