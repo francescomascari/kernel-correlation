@@ -57,6 +57,7 @@ The abstract of the manuscript is reported below:
 | ----------------------- | ----------------------------------------------------------------------------------------------------------- |
 | `convergence_rate.R`    | Studies the converge rate of the hDP a posteriori as the size of data increases                             |
 | `kernel_stability.R`    | Studies the dependence of the value of kernel correlation on the tuning of kernel parameters                |
+| `other_indx.R`          | Computes the Pearson correlation coefficient and some RKHS-based indices for the Gaussian example           |
 | `par_vs_npar.R`         | Compares borrowing of information between a parametric Gaussian model and an HDP                            |
 | `smpl_vs_anlys.R`       | Compares the sampling-based method and the analytics-based method to compute the kernel correlation for hDP |
 
@@ -64,7 +65,7 @@ The abstract of the manuscript is reported below:
 ## Requirements
 
 - **R** (≥ 4.1.0)
-- **R packages** : `tidyverse`, `doParallel`, `emulator`, `matrixStats`, `extrafont`
+- **R packages** : `tidyverse`, `doParallel`, `mvtnorm`, `emulator`, `matrixStats`, `extrafont`
 - **System fonts** : [Latin Modern (LM) Roman 10](https://www.ctan.org/tex-archive/fonts/lm)
     > **NOTE:** To register fonts (only once per R installation)
                 ```

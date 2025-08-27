@@ -4,6 +4,9 @@ require("tidyverse")
 # package for parallelization
 require("doParallel")
 
+# functions for multivariate normal distributions
+require("mvtnorm")
+
 # functions for computation of quadratic forms
 require("emulator", include.only = c("quad.form", "quad.3form"))
 
