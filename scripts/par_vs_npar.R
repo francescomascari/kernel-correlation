@@ -493,7 +493,7 @@ gauVShdp_df <- cbind(corr_df, value = val_gauVShdp)
 max_val <- max(c(val_gauVSgau, val_hdpVShdp, val_gauVShdp))
 
 # open the file to save the plot
-png(paste("output/plots/par_vs_npar_gauVSgau.png"), width = 900, height = 840, units = "px", res = 72)
+png("output/plots/par_vs_npar_gauVSgau.png", width = 900, height = 840, units = "px", res = 72)
 
 # make a tile plot comparing cases within the Gaussian example
 ggplot(gauVSgau_df, aes(x = corr1, y = corr2, fill = value)) +
@@ -518,7 +518,7 @@ ggplot(gauVSgau_df, aes(x = corr1, y = corr2, fill = value)) +
 dev.off()
 
 # open the file to save the plot
-png(paste("output/plots/par_vs_npar_hdpVShdp.png"), width = 900, height = 840, units = "px", res = 72)
+png("output/plots/par_vs_npar_hdpVShdp.png", width = 900, height = 840, units = "px", res = 72)
 
 # make a tile plot comparing cases within the hDP
 ggplot(hdpVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
@@ -543,7 +543,7 @@ ggplot(hdpVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
 dev.off()
 
 # open the file to save the plot
-png(paste("output/plots/par_vs_npar_gauVShdp.png"), width = 900, height = 840, units = "px", res = 72)
+png("output/plots/par_vs_npar_gauVShdp.png", width = 900, height = 840, units = "px", res = 72)
 
 # make a tile plot comparing cases across the Gaussian example and the hDP
 ggplot(gauVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
