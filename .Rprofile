@@ -5,6 +5,9 @@
 # package for data manipolation
 require("tidyverse")
 
+# package for parallelization
+require("doParallel")
+
 # functions for computation of quadratic forms
 require("emulator", include.only = c("quad.form", "quad.3form"))
 

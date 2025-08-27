@@ -42,7 +42,6 @@ val_mat$setwise <- NA
 val_mat$linear <- NA
 
 # set up parallelization
-require("doParallel")
 n_cores <- detectCores()
 cluster <- makeCluster(n_Cores - 1)
 registerDoParallel(cluster)
@@ -68,7 +67,7 @@ for (i in seq_len(cases)) {
   for (k in kernel_vec) {
     # compute the kernel correlation `reps` times in parallel
     # and sum the realizations over the runs
-    sum_vals <- foreach(i = seq_len(reps), .combine = sum, .inorder = FALSE, .export = c("do_outer_mat","quad.form","quad.3form","logSumExp","update_q_probs","gibbs_tabs","hdp_corr_anlys")) %dopar%
+    sum_vals <- foreach(i = seq_len(reps), .combine = sum, .inorder = FALSE, .export = c("do_outer_mat", "quad.form", "quad.3form", "logSumExp", "update_q_probs", "gibbs_tabs", "hdp_corr_anlys")) %dopar%
       {hdp_corr_anlys(seen = seen_now_mat, c0 = 1, c = 1, R = 1000, bsln = runif, M = 10000, kernel = k, par_k = par_k)}
 
     # store the mean value of the kernel correlation

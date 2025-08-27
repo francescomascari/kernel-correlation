@@ -187,7 +187,7 @@ ggplot(c_df, aes(x = corr, y = c, color = sigma, shape = sigma)) +
 dev.off()
 
 
-## PART 3 : Data Generation
+## PART 3 : Data generation
 
 # set the values of `t_sq` and `v`
 t_sq <- 2
