@@ -33,6 +33,7 @@ The abstract of the manuscript is reported below:
 ```
 
 ## Helper Functions
+
 `R/` contains all **R** files that define helper functions used across scripts.
 
 | File                      | Purpose                                                                     |
@@ -50,13 +51,14 @@ The abstract of the manuscript is reported below:
 
 
 ## Scripts for simulations
+
 `scripts/` contains all **R** scripts to perform simulations.
 | File                    | Purpose                                                                                                     |
 | ----------------------- | ----------------------------------------------------------------------------------------------------------- |
 | `convergence_rate.R`    | Studies the converge rate of the hDP a posteriori as the size of data increases                             |
 | `kernel_stability.R`    | Studies the dependence of the value of kernel correlation on the tuning of kernel parameters                |
-| `par_vs_npar.R`         | Compares the borrowing of information in a Gaussian parametric example and in an hDP                        |
-| `smpl_vs_analys.R`      | Compares the sampling-based method and the analytics-based method to compute the kernel correlation for hDP |
+| `par_vs_npar.R`         | Compares borrowing of information between a parametric Gaussian model and an HDP                            |
+| `smpl_vs_anlys.R`       | Compares the sampling-based method and the analytics-based method to compute the kernel correlation for hDP |
 
 
 ## Requirements
@@ -85,6 +87,11 @@ When opening the project `Kernel-correlation.Rproj` (e.g., via RStudio), the `.R
 - Sources the scripts in `R/`.
 
 This ensures all functions are loaded and the files in `scripts/` are ready to use.
+
+
+## Reproducibility
+
+All outputs are fully reproducible from the scripts in `scripts/`, and results are regenerated programmatically.
 
 
 ## License
