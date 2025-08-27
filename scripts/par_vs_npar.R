@@ -52,23 +52,23 @@ v <- 1 / 4
 
 # define the vector of values of `sigma` starting from the maximal value
 sigma_max <- sqrt(2 * t_sq / (1 / (1 - v)^2 - 1))
-sigma_vec <- sigma_max * sqrt(2)^seq(-1, -20, by = -4)
+sigma_vec <- sigma_max * sqrt(2)^(-1 - 4 * seq(0, 3))
 
 # define the vector of value of `xi`
-xi_vec <- seq(0, 1, length.out = 21)
+corr_vec <- seq(0, 1, length.out = 21)
 
 
 ## PART 2.1 : Plot for `rho`
 
 # obtain the values of `rho` for different values of `sigma` and `xi`
-rho_mat <- sapply(sigma_vec, function(sigma) compute_rho(xi_vec, t_sq, v, sigma), USE.NAMES = TRUE)
+rho_mat <- sapply(sigma_vec, function(sigma) compute_rho(corr_vec, t_sq, v, sigma), USE.NAMES = TRUE)
 
 # store those values in a data frame
 rho_df <- as.data.frame(rho_mat) %>%
   # rename the columns according to the value of sigma
   rename_with(~ c(as.character(format(round(sigma_vec, 2), nsmall = 2)))) %>%
   # add the value of `xi` as a column
-  mutate(corr = xi_vec) %>%
+  mutate(corr = corr_vec) %>%
   # pivot to obtain a matrix suitable for plotting
   pivot_longer(cols = -corr,
                names_to = "sigma",
@@ -86,12 +86,16 @@ ggplot(rho_df, aes(x = corr, y = rho, color = sigma, shape = sigma)) +
   geom_point(size = 6) +
   # add axis labels
   labs(y = expression(rho),
-       x = "Correlation") +
+       x = bquote(bold(Corr[k]))) +
+  # associate each value of sigma to a fill color
+  scale_color_manual(values = c("purple3", "darkorange3", "lightgreen", "cyan3")) +
+  # associate each value of sigma to a shape
+  scale_shape_manual(values = c(16, 17, 15, 3)) +
   # add a theme for better readability
   theme_classic() +
   # set the fonts of the plot to LaTeX style
-  theme(axis.title = element_text(vjust = 0, family="LM Roman 10", size = 30,face="bold"),
-        axis.text = element_text(size = 20, family="LM Roman 10", face = "bold"),
+  theme(axis.title = element_text(vjust = 0, family = "LM Roman 10", size = 30, face="bold"),
+        axis.text = element_text(size = 20, family = "LM Roman 10", face = "bold"),
         panel.grid = element_line(size = 1.5),
         legend.position = "top",
         legend.title = element_blank(),
@@ -104,14 +108,14 @@ dev.off()
 ## PART 2.2 : Plot for `c0`
 
 # obtain the values of `c0` for different values of `sigma` and `xi`
-c0_mat <- sapply(sigma_vec, function(sigma) compute_c0(xi_vec, t_sq, v, sigma), USE.NAMES = TRUE)
+c0_mat <- sapply(sigma_vec, function(sigma) compute_c0(corr_vec, t_sq, v, sigma), USE.NAMES = TRUE)
 
 # store those values in a data frame
 c0_df <- as.data.frame(c0_mat) %>%
   # rename the columns according to the value of sigma
   rename_with(~ c(as.character(format(round(sigma_vec, 2), nsmall = 2)))) %>%
   # add the value of `xi` as a column
-  mutate(corr = xi_vec) %>%
+  mutate(corr = corr_vec) %>%
   # pivot to obtain a matrix suitable for plotting
   pivot_longer(cols = -corr,
                names_to = "sigma",
@@ -129,10 +133,16 @@ ggplot(c0_df, aes(x = corr, y = c0, color = sigma, shape = sigma)) +
   geom_point(size = 6) +
   # add axis labels
   labs(y = expression(c[0]),
-       x = "Correlation") +
+       x = bquote(bold(Corr[k]))) +
   # set the scale of
   scale_y_continuous(transform = "log10") +
+  # associate each value of sigma to a fill color
+  scale_color_manual(values = c("purple3", "darkorange3", "lightgreen", "cyan3")) +
+  # associate each value of sigma to a shape
+  scale_shape_manual(values = c(16, 17, 15, 3)) +
+  # add a theme for better readability
   theme_classic() +
+  # set the fonts of the plot to LaTeX style
   theme(axis.title = element_text(vjust = 0, family="LM Roman 10", size = 30,face="bold"),
         axis.text = element_text(size = 20, family="LM Roman 10", face = "bold"),
         panel.grid = element_line(size = 1.5),
@@ -147,14 +157,14 @@ dev.off()
 ## PART 2.3 : Plot for `c`
 
 # obtain the values of `c` for different values of `sigma` and `xi`
-c_mat <- sapply(sigma_vec, function(sigma) compute_c(xi_vec, t_sq, v, sigma), USE.NAMES = TRUE)
+c_mat <- sapply(sigma_vec, function(sigma) compute_c(corr_vec, t_sq, v, sigma), USE.NAMES = TRUE)
 
 # store those values in a data frame
 c_df <- as.data.frame(c_mat) %>%
   # rename the columns according to the value of sigma
   rename_with(~ c(as.character(format(round(sigma_vec, 2), nsmall = 2)))) %>%
   # add the value of `xi` as a column
-  mutate(corr = xi_vec) %>%
+  mutate(corr = corr_vec) %>%
   # pivot to obtain a matrix suitable for plotting
   pivot_longer(cols = -corr,
                names_to = "sigma",
@@ -172,10 +182,16 @@ ggplot(c_df, aes(x = corr, y = c, color = sigma, shape = sigma)) +
   geom_point(size = 6) +
   # add axis labels
   labs(y = expression(c[0]),
-       x = "Correlation") +
+       x = bquote(bold(Corr[k]))) +
   # set the scale of
   scale_y_continuous(transform = "log10") +
+  # associate each value of sigma to a fill color
+  scale_color_manual(values = c("purple3", "darkorange3", "lightgreen", "cyan3")) +
+  # associate each value of sigma to a shape
+  scale_shape_manual(values = c(16, 17, 15, 3)) +
+  # add a theme for better readability
   theme_classic() +
+  # set the fonts of the plot to LaTeX style
   theme(axis.title = element_text(vjust = 0, family="LM Roman 10", size = 30,face="bold"),
         axis.text = element_text(size = 20, family="LM Roman 10", face = "bold"),
         panel.grid = element_line(size = 1.5),
@@ -222,15 +238,15 @@ m2 <- mean(X2)
 # save the generated data points in a matrix with all the unique dishes
 # with the frequencies of tables and customers
 X <- unique(c(X1, X2))
-n1_all <- sapply(X_tot, function(val) {sum(X1 == val)})
-n2_all <- sapply(X_tot, function(val) {sum(X2 == val)})
+n1_all <- sapply(X, function(val) {sum(X1 == val)})
+n2_all <- sapply(X, function(val) {sum(X2 == val)})
 seen <- data.frame(X = X, Ncusts1 = n1_all, Ncusts2 = n2_all)
 
 # store the size of the samples
 M <- 10000
 
 # store the values of the kernel correlation
-xi_vec <- c(0.01,0.50,0.99)
+xi_vec <- c(0.01, 0.50, 0.99)
 
 # store the total number of cases
 cases <- length(xi_vec)
@@ -291,7 +307,7 @@ write.csv(X_gau, file = "output/results/par_vs_npar_X_gau.csv", row.names = FALS
 
 ## PART 4.2 : Hierarchical Dirichlet Process
 
-if (n1_tot != 0 || n2_tot != 0) {
+if (n1 != 0 || n2 != 0) {
   seen_q1_mat <- lapply(n1_vec, FUN = function(times) {rep(1, times)})
   seen_q2_mat <- lapply(n2_vec, FUN = function(times) {rep(1, times)})
 }
@@ -396,11 +412,11 @@ for (i in seq_len(cases)) {
     theme_classic() +
     # set the fonts of the plot to LaTeX style
     theme(axis.title = element_blank(),
-          axis.text = element_text(size = 20, family = "LM Roman 10", face = "bold"),
+          axis.text = element_text(size = 30, family = "LM Roman 10", face = "bold"),
           panel.grid = element_line(size = 1.5),
           legend.position = "top",
           legend.title = element_blank(),
-          legend.text = element_text(family = "LM Roman 10", size = 20, face = "bold")) +
+          legend.text = element_text(family = "LM Roman 10", size = 30, face = "bold")) +
     # set the limits of the axes
     xlim(c(-4, 4)) +
     ylim(c(0, 2))
@@ -425,11 +441,11 @@ for (i in seq_len(cases)) {
     theme_classic() +
     # set the fonts of the plot to LaTeX style
     theme(axis.title = element_blank(),
-          axis.text = element_text(size = 20, family = "LM Roman 10", face = "bold"),
+          axis.text = element_text(size = 30, family = "LM Roman 10", face = "bold"),
           panel.grid = element_line(size = 1.5),
           legend.position = "top",
           legend.title = element_blank(),
-          legend.text = element_text(family = "LM Roman 10", size = 20, face = "bold")) +
+          legend.text = element_text(family = "LM Roman 10", size = 30, face = "bold")) +
     # set the limits of the axes
     ylim(c(0, 1.2)) +
     xlim(c(-5.5, 5.5))
@@ -472,8 +488,12 @@ gauVSgau_df <- cbind(corr_df, value = val_gauVSgau)
 hdpVShdp_df <- cbind(corr_df, value = val_hdpVShdp)
 gauVShdp_df <- cbind(corr_df, value = val_gauVShdp)
 
+# store the maximal value of the kernel correlation
+# to set the upper limit of the color gradient
+max_val <- max(c(val_gauVSgau, val_hdpVShdp, val_gauVShdp))
+
 # open the file to save the plot
-png(paste("output/plots/par_vs_npar_gauVSgau", corr, ".png", sep = ""), width = 900, height = 840, units = "px", res = 72)
+png(paste("output/plots/par_vs_npar_gauVSgau.png"), width = 900, height = 840, units = "px", res = 72)
 
 # make a tile plot comparing cases within the Gaussian example
 ggplot(gauVSgau_df, aes(x = corr1, y = corr2, fill = value)) +
@@ -481,7 +501,8 @@ ggplot(gauVSgau_df, aes(x = corr1, y = corr2, fill = value)) +
   # add the actual values of the absolute distances
   geom_text(aes(label = sprintf("%.2f", value)), color = "black", family="LM Roman 10", size = 8, fontface = "bold", show.legend = FALSE) +
   # add a gradient scale for readability
-  scale_fill_gradient(high = "firebrick", low = "forestgreen") +
+  scale_fill_gradientn(colours = c("forestgreen", "firebrick"),
+                       values = c(0, max_val)) +
   # add axis labels
   labs(x = "Correlation: Gaussian case",
        y = "Correlation: Gaussian case") +
@@ -497,7 +518,7 @@ ggplot(gauVSgau_df, aes(x = corr1, y = corr2, fill = value)) +
 dev.off()
 
 # open the file to save the plot
-png(paste("output/plots/par_vs_npar_hdpVShdp", corr, ".png", sep = ""), width = 900, height = 840, units = "px", res = 72)
+png(paste("output/plots/par_vs_npar_hdpVShdp.png"), width = 900, height = 840, units = "px", res = 72)
 
 # make a tile plot comparing cases within the hDP
 ggplot(hdpVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
@@ -505,7 +526,8 @@ ggplot(hdpVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
   # add the actual values of the absolute distances
   geom_text(aes(label = sprintf("%.2f", value)), color = "black", family="LM Roman 10", size = 8, fontface = "bold", show.legend = FALSE) +
   # add a gradient scale for readability
-  scale_fill_gradient(high = "firebrick", low = "forestgreen") +
+  scale_fill_gradientn(colours = c("forestgreen", "firebrick"),
+                       values = c(0, max_val)) +
   # add axis labels
   labs(x = "Correlation: hDP case",
        y = "Correlation: hDP case") +
@@ -521,7 +543,7 @@ ggplot(hdpVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
 dev.off()
 
 # open the file to save the plot
-png(paste("output/plots/par_vs_npar_gauVShdp", corr, ".png", sep = ""), width = 900, height = 840, units = "px", res = 72)
+png(paste("output/plots/par_vs_npar_gauVShdp.png"), width = 900, height = 840, units = "px", res = 72)
 
 # make a tile plot comparing cases across the Gaussian example and the hDP
 ggplot(gauVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
@@ -529,7 +551,8 @@ ggplot(gauVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
   # add the actual values of the absolute distances
   geom_text(aes(label = sprintf("%.2f", value)), color = "black", family="LM Roman 10", size = 8, fontface = "bold", show.legend = FALSE) +
   # add a gradient scale for readability
-  scale_fill_gradient(high="firebrick", low = "forestgreen") +
+  scale_fill_gradientn(colours = c("forestgreen", "firebrick"),
+                       values = c(0, max_val)) +
   # add axis labels
   labs(x = "Correlation: Gaussian case",
        y = "Correlation: hDP case") +

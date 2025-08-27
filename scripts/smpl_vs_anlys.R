@@ -63,7 +63,7 @@ png("output/plots/smpl_vs_anlys_plot.png", width = 900, height = 840, units = "p
 # make a boxplot of the values obtained according to the two algorithms
 # over the `reps` run
 ggplot() +
-  geom_boxplot(data = df_val, aes(x  = Method, y = Value, fill = Method),linewidth=0.75,alpha = 0.4, show.legend = FALSE) +
+  geom_boxplot(data = df_val, aes(x  = Method, y = Value, fill = Method), linewidth = 0.75, show.legend = FALSE) +
   # add labels referring to the values of the quartiles for each boxplot
   geom_text(data = quartiles_anlys, aes(x = "Analytics", y = y + sign(y-y[2])*0.05, label = y),
             nudge_x = .4,
@@ -76,14 +76,14 @@ ggplot() +
             size = 5,
             family = "LM Roman 10") +
   # set the color of the boxplot for each method
-  scale_fill_manual(name = "Method", values = c("Sampling"="red3","Analytics"="blue3")) +
+  scale_fill_manual(name = "Method", values = c("Analytics" = "firebrick", "Sampling" = "forestgreen")) +
   # se the axis labels
-  labs(y = "Correlation", x = "Method") +
+  labs(y = bquote(bold(Corr[k])), x = NULL) +
   # add a theme for better readability
   theme_classic() +
   # set the fonts of the plot to LaTeX style
-  theme(axis.title = element_text(vjust = 0, family="LM Roman 10", size = 30,face="bold"),
-        axis.text = element_text(size = 20, family="LM Roman 10", face = "bold"))
+  theme(axis.title = element_text(vjust = 0, family = "LM Roman 10", size = 30, face = "bold"),
+        axis.text = element_text(size = 20, family = "LM Roman 10", face = "bold"))
 
 # close the file to save the plot
 dev.off()

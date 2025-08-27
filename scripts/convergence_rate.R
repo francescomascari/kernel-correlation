@@ -110,7 +110,7 @@ ggplot(data = plot_mat) +
   # use the actual values to plot the points
   geom_point(aes(x = n1_n2, y = corr, color = kernel, shape = kernel), size = 6) +
   # add axis labels
-  labs(x = bquote(bold(n[1] * n[2])), y = "Correlation") +
+  labs(x = bquote(bold(n[1] * n[2])), y = bquote(bold(Corr[k]))) +
   # associate each kernel value to a fill color
   scale_color_manual(values = c("gaussian" = "purple3",
                                 "laplace" = "darkorange3",
@@ -118,10 +118,10 @@ ggplot(data = plot_mat) +
                                 "setwise" = "cyan3"),
                      labels = function(x) tools::toTitleCase(x)) +
   # associate each kernel value to a shape
-  scale_shape_manual(values = c("gaussian" = 15,
-                                "laplace" = 16,
-                                "linear" = 18,
-                                "setwise" = 17),
+  scale_shape_manual(values = c("gaussian" = 16,
+                                "laplace" = 17,
+                                "linear" = 15,
+                                "setwise" = 3),
                      labels = function(x) tools::toTitleCase(x)) +
   # add a theme for better readability
   theme_classic() +
