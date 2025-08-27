@@ -1,7 +1,3 @@
-#source("renv/activate.R")
-
-#require("jsonlite")
-
 # package for data manipolation
 require("tidyverse")
 
