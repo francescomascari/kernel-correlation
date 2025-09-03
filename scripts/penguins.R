@@ -43,167 +43,7 @@ compute_c <- function(xi, t_sq, v, sigma){
 }
 
 
-## PART 2: Plot for `rho`, `c0`, and `c` as functions of `xi`
-##         for different values of `sigma`
-
-# set the values of `t_sq` and `v`
-t_sq <- 2
-v <- 1 / 4
-
-# define the vector of values of `sigma` starting from the maximal value
-sigma_max <- sqrt(2 * t_sq / (1 / (1 - v)^2 - 1))
-sigma_vec <- sigma_max * sqrt(2)^(-1 - 4 * seq(0, 3))
-
-# define the vector of value of `xi`
-corr_vec <- seq(0, 1, length.out = 21)
-
-
-## PART 2.1 : Plot for `rho`
-
-# obtain the values of `rho` for different values of `sigma` and `xi`
-rho_mat <- sapply(sigma_vec, function(sigma) compute_rho(corr_vec, t_sq, v, sigma), USE.NAMES = TRUE)
-
-# store those values in a data frame
-rho_df <- as.data.frame(rho_mat) %>%
-  # rename the columns according to the value of sigma
-  rename_with(~ c(as.character(format(round(sigma_vec, 2), nsmall = 2)))) %>%
-  # add the value of `xi` as a column
-  mutate(corr = corr_vec) %>%
-  # pivot to obtain a matrix suitable for plotting
-  pivot_longer(cols = -corr,
-               names_to = "sigma",
-               values_to = "rho") %>%
-  # mutate sigma as a factor variable for grouping
-  mutate(sigma = as.factor(sigma))
-
-# open the file to save the plot
-png("output/plots/par_vs_npar_rho_plot.png", width = 900, height = 840, units = "px", res = 72)
-
-# plot the values of `rho` vs the values of the kernel correlation
-ggplot(rho_df, aes(x = corr, y = rho, color = sigma, shape = sigma)) +
-  # plot both the lines and the individual points
-  geom_line(linewidth = 2) +
-  geom_point(size = 6) +
-  # add axis labels
-  labs(y = expression(rho),
-       x = bquote(bold(Corr[k]))) +
-  # associate each value of sigma to a fill color
-  scale_color_manual(values = c("purple3", "darkorange3", "lightgreen", "cyan3")) +
-  # associate each value of sigma to a shape
-  scale_shape_manual(values = c(16, 17, 15, 3)) +
-  # add a theme for better readability
-  theme_classic() +
-  # set the fonts of the plot to LaTeX style
-  theme(axis.title = element_text(vjust = 0, family = "LM Roman 10", size = 30, face="bold"),
-        axis.text = element_text(size = 20, family = "LM Roman 10", face = "bold"),
-        panel.grid = element_line(size = 1.5),
-        legend.position = "top",
-        legend.title = element_blank(),
-        legend.text = element_text(family = "LM Roman 10", size = 20, face = "bold"))
-
-# close the file to save the plot
-dev.off()
-
-
-## PART 2.2 : Plot for `c0`
-
-# obtain the values of `c0` for different values of `sigma` and `xi`
-c0_mat <- sapply(sigma_vec, function(sigma) compute_c0(corr_vec, t_sq, v, sigma), USE.NAMES = TRUE)
-
-# store those values in a data frame
-c0_df <- as.data.frame(c0_mat) %>%
-  # rename the columns according to the value of sigma
-  rename_with(~ c(as.character(format(round(sigma_vec, 2), nsmall = 2)))) %>%
-  # add the value of `xi` as a column
-  mutate(corr = corr_vec) %>%
-  # pivot to obtain a matrix suitable for plotting
-  pivot_longer(cols = -corr,
-               names_to = "sigma",
-               values_to = "c0") %>%
-  # mutate sigma as a factor variable for grouping
-  mutate(sigma = as.factor(sigma))
-
-# open the file to save the plot
-png("output/plots/par_vs_npar_c0_plot.png", width = 900, height = 840, units = "px", res = 72)
-
-# plot the values of `c0` vs the values of the kernel correlation
-ggplot(c0_df, aes(x = corr, y = c0, color = sigma, shape = sigma)) +
-  # plot both the lines and the individual points
-  geom_line(linewidth = 2) +
-  geom_point(size = 6) +
-  # add axis labels
-  labs(y = expression(c[0]),
-       x = bquote(bold(Corr[k]))) +
-  # set the scale of
-  scale_y_continuous(transform = "log10") +
-  # associate each value of sigma to a fill color
-  scale_color_manual(values = c("purple3", "darkorange3", "lightgreen", "cyan3")) +
-  # associate each value of sigma to a shape
-  scale_shape_manual(values = c(16, 17, 15, 3)) +
-  # add a theme for better readability
-  theme_classic() +
-  # set the fonts of the plot to LaTeX style
-  theme(axis.title = element_text(vjust = 0, family="LM Roman 10", size = 30,face="bold"),
-        axis.text = element_text(size = 20, family="LM Roman 10", face = "bold"),
-        panel.grid = element_line(size = 1.5),
-        legend.position = "top",
-        legend.title = element_blank(),
-        legend.text = element_text(family = "LM Roman 10", size = 20, face = "bold"))
-
-# close the file to save the plot
-dev.off()
-
-
-## PART 2.3 : Plot for `c`
-
-# obtain the values of `c` for different values of `sigma` and `xi`
-c_mat <- sapply(sigma_vec, function(sigma) compute_c(corr_vec, t_sq, v, sigma), USE.NAMES = TRUE)
-
-# store those values in a data frame
-c_df <- as.data.frame(c_mat) %>%
-  # rename the columns according to the value of sigma
-  rename_with(~ c(as.character(format(round(sigma_vec, 2), nsmall = 2)))) %>%
-  # add the value of `xi` as a column
-  mutate(corr = corr_vec) %>%
-  # pivot to obtain a matrix suitable for plotting
-  pivot_longer(cols = -corr,
-               names_to = "sigma",
-               values_to = "c") %>%
-  # mutate sigma as a factor variable for grouping
-  mutate(sigma = as.factor(sigma))
-
-# open the file to save the plot
-png("output/plots/par_vs_npar_c_plot.png", width = 900, height = 840, units = "px", res = 72)
-
-# plot the values of `c0` vs the values of the kernel correlation
-ggplot(c_df, aes(x = corr, y = c, color = sigma, shape = sigma)) +
-  # plot both the lines and the individual points
-  geom_line(linewidth = 2) +
-  geom_point(size = 6) +
-  # add axis labels
-  labs(y = expression(c[0]),
-       x = bquote(bold(Corr[k]))) +
-  # set the scale of
-  scale_y_continuous(transform = "log10") +
-  # associate each value of sigma to a fill color
-  scale_color_manual(values = c("purple3", "darkorange3", "lightgreen", "cyan3")) +
-  # associate each value of sigma to a shape
-  scale_shape_manual(values = c(16, 17, 15, 3)) +
-  # add a theme for better readability
-  theme_classic() +
-  # set the fonts of the plot to LaTeX style
-  theme(axis.title = element_text(vjust = 0, family="LM Roman 10", size = 30,face="bold"),
-        axis.text = element_text(size = 20, family="LM Roman 10", face = "bold"),
-        panel.grid = element_line(size = 1.5),
-        legend.position = "top",
-        legend.title = element_blank(),
-        legend.text = element_text(family = "LM Roman 10", size = 20, face = "bold"))
-
-# close the file to save the plot
-dev.off()
-
-
-## PART 3 : Data generation
+## PART 2 : Data upload and kernel correlation computation
 
 # set the values of `t_sq` and `v`
 t_sq <- 2
@@ -216,31 +56,41 @@ sigma <- sqrt(t_sq / (1 / (1 - v)^2 - 1))
 s_sq <- compute_s_sq(t_sq, v, sigma)
 tau_sq <- compute_tau_sq(t_sq, v, sigma)
 
-# set the seed for reproducibility
-set.seed(1)
+library(palmerpenguins)
 
-# generate 200 data points for the first group from an hDP
-# with concentration parameters `c0 = 10` and `c = 10`
-# and normal baseline with mean 0 and variance 2
-# and store their mean
-n1 <- 200
-X1 <- hdp_XT_sampler(n1, 0, c = 10, c0 = 10, P00 = function(n) {rnorm(n, mean = -1, sd = sqrt(2))})[, "X"]
-m1 <- mean(X1)
+# Load the penguins dataset
+data(penguins)
 
-# generate 10 data points for the second group from an hDP
-# with concentration parameters `c0 = 10` and `c = 10`
-# and normal baseline with mean 0 and variance 2
-# and store their mean
-n2 <- 10
-X2 <- hdp_XT_sampler(0, n2, c = 10, c0 = 10, P00 = function(n) {rnorm(n, mean = 1, sd = sqrt(2))})[, "X"]
-m2 <- mean(X2)
+# Clean the penguins dataset
+penguins_clean <- penguins %>% drop_na()
 
-# save the generated data points in a matrix with all the unique dishes
-# with the frequencies of tables and customers
-X <- unique(c(X1, X2))
-n1_all <- sapply(X, function(val) {sum(X1 == val)})
-n2_all <- sapply(X, function(val) {sum(X2 == val)})
-seen <- data.frame(X = X, Ncusts1 = n1_all, Ncusts2 = n2_all)
+# save the data in a matrix with all the unique values and their counts
+# Calculate Ncusts1 (male occurrences) and Ncusts2 (female occurrences)
+flipper_counts <- penguins_clean %>%
+  group_by(flipper_length_mm, sex) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  pivot_wider(names_from = sex, values_from = count, values_fill = 0) %>%
+  rename(X = flipper_length_mm, Ncusts1 = female, Ncusts2 = male)
+
+# save vectors of counts for each group
+n1_all <- flipper_counts$Ncusts1
+n2_all <- flipper_counts$Ncusts2
+
+# compute the total number of subjects for each group
+n1 <- flipper_counts %>%
+  summarise(sum(Ncusts1)) %>%
+  as.numeric()
+n2 <- flipper_counts %>%
+  summarise(sum(Ncusts2)) %>%
+  as.numeric()
+
+# compute the means for each group
+m1 <- flipper_counts %>%
+  summarise(sum(X * Ncusts1) / sum(Ncusts1)) %>%
+  as.numeric()
+m2 <- flipper_counts %>%
+  summarise(sum(X * Ncusts2) / sum(Ncusts2)) %>%
+  as.numeric()
 
 # store the size of the samples
 M <- 10000
@@ -251,17 +101,8 @@ xi_vec <- c(0.01, 0.50, 0.99)
 # store the total number of cases
 cases <- length(xi_vec)
 
-# save the data matrix
-write.csv(seen, file = "output/results/par_vs_npar_seen.csv", row.names = FALSE)
 
-
-## PART 4 : Computation of kernel correlation
-
-# import the `seen` matrix from the previous step
-seen <- as.matrix(read.csv("output/results/par_vs_npar_seen.csv"))
-
-
-## PART 4.1 : Gaussian example
+## PART 2.1 : Gaussian example
 
 # allocate the data frame to save the samples for the gaussian example
 X_gau <- data.frame(X = numeric(0),
@@ -302,10 +143,10 @@ for (i in seq_len(cases)) {
 }
 
 # save the samples for the Gaussian example
-write.csv(X_gau, file = "output/results/par_vs_npar_X_gau.csv", row.names = FALSE)
+write.csv(X_gau, file = "output/results/penguins_X_gau.csv", row.names = FALSE)
 
 
-## PART 4.2 : Hierarchical Dirichlet Process
+## PART 2.2 : Hierarchical Dirichlet Process
 
 if (n1 != 0 || n2 != 0) {
   seen_q1_mat <- lapply(n1_all, FUN = function(times) {rep(1, times)})
@@ -347,7 +188,7 @@ for (i in seq_len(cases)) {
 
   for (i in seq_len(M)) {
     # impose this table disposition
-    seen_mat <- cbind(seen, "Ntabs" = l_vec)
+    seen_mat <- cbind(flipper_counts, "Ntabs" = l_vec)
 
     # sample one value from the first group and save it in `X1_gau`
     joint_vals1 <- hdp_mat_sampler(1, 0, seen = seen_mat, smpl_method = "alt", start = 1, c0 = c0, c = c, P00 = function(n) {rnorm(n, mean = 0, sd = sqrt(t_sq))})$new_X
@@ -382,14 +223,14 @@ for (i in seq_len(cases)) {
 }
 
 # save the samples for the hDP
-write.csv(X_hdp, file = "output/results/par_vs_npar_X_hdp.csv", row.names = FALSE)
+write.csv(X_hdp, file = "output/results/penguins_X_hdp.csv", row.names = FALSE)
 
 
 ## PART 5 : Plots of the mean posterior predictive distributions
 
 # import the `X_gau` and `X_hdp` data frames from the previous step
-X_gau <- read.csv("output/results/par_vs_npar_X_gau.csv")
-X_hdp <- read.csv("output/results/par_vs_npar_X_hdp.csv")
+X_gau <- read.csv("output/results/penguins_X_gau.csv")
+X_hdp <- read.csv("output/results/penguins_X_hdp.csv")
 
 # for every value of the kernel correlation
 for (i in seq_len(cases)) {
@@ -397,7 +238,7 @@ for (i in seq_len(cases)) {
   corr <- xi_vec[i]
 
   # open the file to save the plot
-  png(paste("output/plots/par_vs_npar_gau", corr, ".png", sep = ""), width = 900, height = 840, units = "px", res = 72)
+  png(paste("output/plots/penguins_gau", corr, ".png", sep = ""), width = 900, height = 840, units = "px", res = 72)
 
   # plot the distribution of the sample corresponding to the value of
   # kernel correlation under investigation for the Gaussian example
@@ -417,16 +258,15 @@ for (i in seq_len(cases)) {
           legend.position = "top",
           legend.title = element_blank(),
           legend.text = element_text(family = "LM Roman 10", size = 30, face = "bold")) +
-    # set the limits of the axes
-    xlim(c(-4, 4)) +
-    ylim(c(0, 2))
+    # set the limits of the x axis
+    xlim(c(190, 210))
 
   # add the plot to the file and close the file to save it
   print(a)
   dev.off()
 
   # open the file to save the plot
-  png(paste("output/plots/par_vs_npar_hdp", corr, ".png", sep = ""), width = 900, height = 840, units = "px", res = 72)
+  png(paste("output/plots/penguins_hdp", corr, ".png", sep = ""), width = 900, height = 840, units = "px", res = 72)
 
   # plot the distribution of the sample corresponding to the value of
   # kernel correlation under investigation for the hDP
@@ -446,9 +286,8 @@ for (i in seq_len(cases)) {
           legend.position = "top",
           legend.title = element_blank(),
           legend.text = element_text(family = "LM Roman 10", size = 30, face = "bold")) +
-    # set the limits of the axes
-    ylim(c(0, 1.2)) +
-    xlim(c(-5.5, 5.5))
+    # set the limits of the x axis
+    xlim(c(150, 250))
 
   # add the plot to the file and close the file to save it
   print(b)
@@ -493,7 +332,7 @@ gauVShdp_df <- cbind(corr_df, value = val_gauVShdp)
 max_val <- max(c(val_gauVSgau, val_hdpVShdp, val_gauVShdp))
 
 # open the file to save the plot
-png("output/plots/par_vs_npar_gauVSgau.png", width = 900, height = 840, units = "px", res = 72)
+png("output/plots/penguins_gauVSgau.png", width = 900, height = 840, units = "px", res = 72)
 
 # make a tile plot comparing cases within the Gaussian example
 ggplot(gauVSgau_df, aes(x = corr1, y = corr2, fill = value)) +
@@ -518,7 +357,7 @@ ggplot(gauVSgau_df, aes(x = corr1, y = corr2, fill = value)) +
 dev.off()
 
 # open the file to save the plot
-png("output/plots/par_vs_npar_hdpVShdp.png", width = 900, height = 840, units = "px", res = 72)
+png("output/plots/penguins_hdpVShdp.png", width = 900, height = 840, units = "px", res = 72)
 
 # make a tile plot comparing cases within the hDP
 ggplot(hdpVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
@@ -527,7 +366,7 @@ ggplot(hdpVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
   geom_text(aes(label = sprintf("%.2f", value)), color = "black", family="LM Roman 10", size = 8, fontface = "bold", show.legend = FALSE) +
   # add a gradient scale for readability
   scale_fill_gradientn(colours = c("forestgreen", "firebrick"),
-                       limits = c(0, max_val)) +
+                       limits = c(0, max_val + 0.01)) +
   # add axis labels
   labs(x = "Correlation: hDP case",
        y = "Correlation: hDP case") +
@@ -543,7 +382,7 @@ ggplot(hdpVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
 dev.off()
 
 # open the file to save the plot
-png("output/plots/par_vs_npar_gauVShdp.png", width = 900, height = 840, units = "px", res = 72)
+png("output/plots/penguins_gauVShdp.png", width = 900, height = 840, units = "px", res = 72)
 
 # make a tile plot comparing cases across the Gaussian example and the hDP
 ggplot(gauVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
@@ -552,7 +391,7 @@ ggplot(gauVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
   geom_text(aes(label = sprintf("%.2f", value)), color = "black", family="LM Roman 10", size = 8, fontface = "bold", show.legend = FALSE) +
   # add a gradient scale for readability
   scale_fill_gradientn(colours = c("forestgreen", "firebrick"),
-                       limits = c(0, max_val)) +
+                       limits = c(0, max_val + 0.01)) +
   # add axis labels
   labs(x = "Correlation: Gaussian case",
        y = "Correlation: hDP case") +
@@ -566,3 +405,4 @@ ggplot(gauVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
 
 # close the file to save the plot
 dev.off()
+
