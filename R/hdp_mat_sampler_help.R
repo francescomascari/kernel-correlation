@@ -52,10 +52,13 @@ hdp_mat_sampler_help <- function(
     return(list(seen_mat = seen_mat, new_X = new_X))
   }
 
+  # specify the group name depending on the group index
+  group_name <- paste("Ncusts",group_indx,sep = "")
+
   # for the data in the `seen_mat` matrix, record
   n_dishes <- nrow(seen_mat) # number of unique values already sampled
   n_tabs <- sum(seen_mat[, "Ntabs"]) # number of tables
-  n_custs <- sum(seen_mat[, group_indx + 1]) # number of costumers
+  n_custs <- sum(seen_mat[, group_name]) # number of costumers
 
   for (k in seq_len(n)) { # for every new value to be sampled
     if (runif(1) < c / (c + n_custs)) {
@@ -66,8 +69,8 @@ hdp_mat_sampler_help <- function(
         n_dishes <- n_dishes + 1
 
         # add the entry related to the new dish to the `seen_mat` matrix
-        new_dish <- c(dish, 0, 0, 1)
-        new_dish[group_indx + 1] <- 1
+        new_dish <- c(X = dish, Ncusts1 = 0, Ncusts2 = 0, Ntabs = 1)
+        new_dish[group_name] <- 1
         seen_mat <- rbind(seen_mat, new_dish)
       } else {
         # old dish
@@ -78,18 +81,18 @@ hdp_mat_sampler_help <- function(
         # update the entry related to the sampled dish in the `seen_mat` matrix
         dish <- seen_mat[indx, "X"]
         seen_mat[indx, "Ntabs"] <- seen_mat[indx, "Ntabs"] + 1
-        seen_mat[indx, group_indx + 1] <- seen_mat[indx, group_indx + 1] + 1
+        seen_mat[indx, group_name] <- seen_mat[indx, group_name] + 1
       }
       n_tabs <- n_tabs + 1
     } else {
       # old table, old dish
 
       # sample an index in seen_mat with respect to the distribution of customers in the group
-      indx <- sample(1:n_dishes, size = 1, prob = seen_mat[, group_indx + 1])
+      indx <- sample(1:n_dishes, size = 1, prob = seen_mat[, group_name])
 
       # update the entry related to the sampled dish in the `seen_mat` matrix
       dish <- seen_mat[indx, "X"]
-      seen_mat[indx, group_indx + 1] <- seen_mat[indx, group_indx + 1] + 1
+      seen_mat[indx, group_name] <- seen_mat[indx, group_name] + 1
     }
     n_custs <- n_custs + 1
 

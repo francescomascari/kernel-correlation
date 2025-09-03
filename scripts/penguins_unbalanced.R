@@ -56,17 +56,36 @@ sigma <- sqrt(t_sq / (1 / (1 - v)^2 - 1))
 s_sq <- compute_s_sq(t_sq, v, sigma)
 tau_sq <- compute_tau_sq(t_sq, v, sigma)
 
-library(palmerpenguins)
-
 # Load the penguins dataset
+library(palmerpenguins)
 data(penguins)
 
 # Clean the penguins dataset
 penguins_clean <- penguins %>% drop_na()
 
-# save the data in a matrix with all the unique values and their counts
-# Calculate Ncusts1 (male occurrences) and Ncusts2 (female occurrences)
-flipper_counts <- penguins_clean %>%
+# create unbalanced datsaset
+# Set a seed for reproducibility, so you get the same 10 females every time
+set.seed(40)
+
+# Separate all the male penguins
+males <- penguins_clean %>%
+  dplyr::filter(sex == "male")
+
+# Randomly sample exactly 10 female penguins
+females_sample <- penguins_clean %>%
+  dplyr::filter(sex == "female") %>%
+  slice_sample(n = 10)
+
+# Combine all males with the 10-female sample to create the unbalanced dataset
+penguins_unbalanced <- bind_rows(males, females_sample)
+
+# Check the new counts of males and females
+penguins_unbalanced %>%
+  count(sex)
+
+# Calculate Ncusts1 (female occurrences) and Ncusts2 (male occurrences)
+# from the new 'penguins_unbalanced' dataset
+flipper_counts <- penguins_unbalanced %>%
   group_by(flipper_length_mm, sex) %>%
   summarise(count = n(), .groups = 'drop') %>%
   pivot_wider(names_from = sex, values_from = count, values_fill = 0) %>%
@@ -139,11 +158,10 @@ for (i in seq_len(cases)) {
 }
 
 # save the samples for the Gaussian example
-write.csv(X_gau, file = "output/results/penguins_X_gau.csv", row.names = FALSE)
+write.csv(X_gau, file = "output/results/penguins_unbalanced_X_gau.csv", row.names = FALSE)
 
 
 ## PART 2.2 : Hierarchical Dirichlet Process
-
 if (n1 != 0 || n2 != 0) {
   seen_q1_mat <- lapply(n1_all, FUN = function(times) {rep(1, times)})
   seen_q2_mat <- lapply(n2_all, FUN = function(times) {rep(1, times)})
@@ -183,15 +201,16 @@ for (i in seq_len(cases)) {
   }
 
   for (i in seq_len(M)) {
+    print(paste(i,"/",M))
     # impose this table disposition
     seen_mat <- cbind(flipper_counts, "Ntabs" = l_vec)
 
     # sample one value from the first group and save it in `X1_gau`
-    joint_vals1 <- hdp_mat_sampler(1, 0, seen = seen_mat, smpl_method = "alt", start = 1, c0 = c0, c = c, P00 = function(n) {rnorm(n, mean = 200, sd = sqrt(10))})$new_X
+    joint_vals1 <- hdp_mat_sampler(1, 0, seen = seen_mat, smpl_method = "alt", start = 1, c0 = c0, c = c, P00 = function(n) {rnorm(n, mean = 200, sd = 10)})$new_X
     X1_hdp <- c(X1_hdp, joint_vals1[joint_vals1[, "group"] == 1, "X"][1])
 
     # sample one value from the second group and save it in `X2_gau`
-    joint_vals2 <- hdp_mat_sampler(0, 1, seen = seen_mat, smpl_method = "alt", start = 2, c0 = c0, c = c, P00 = function(n) {rnorm(n, mean = 200, sd = sqrt(10))})$new_X
+    joint_vals2 <- hdp_mat_sampler(0, 1, seen = seen_mat, smpl_method = "alt", start = 2, c0 = c0, c = c, P00 = function(n) {rnorm(n, mean = 200, sd = 10)})$new_X
     X2_hdp <- c(X2_hdp, joint_vals2[joint_vals2[, "group"] == 2, "X"][1])
 
     # Gibbs update
@@ -219,14 +238,14 @@ for (i in seq_len(cases)) {
 }
 
 # save the samples for the hDP
-write.csv(X_hdp, file = "output/results/penguins_X_hdp.csv", row.names = FALSE)
+write.csv(X_hdp, file = "output/results/penguins_unbalanced_X_hdp.csv", row.names = FALSE)
 
 
 ## PART 5 : Plots of the mean posterior predictive distributions
 
 # import the `X_gau` and `X_hdp` data frames from the previous step
-X_gau <- read.csv("output/results/penguins_X_gau.csv")
-X_hdp <- read.csv("output/results/penguins_X_hdp.csv")
+X_gau <- read.csv("output/results/penguins_unbalanced_X_gau.csv")
+X_hdp <- read.csv("output/results/penguins_unbalanced_X_hdp.csv")
 
 # for every value of the kernel correlation
 for (i in seq_len(cases)) {
@@ -234,7 +253,7 @@ for (i in seq_len(cases)) {
   corr <- xi_vec[i]
 
   # open the file to save the plot
-  png(paste("output/plots/penguins_gau", corr, ".png", sep = ""), width = 900, height = 840, units = "px", res = 72)
+  png(paste("output/plots/penguins_unbalanced_gau", corr, ".png", sep = ""), width = 900, height = 840, units = "px", res = 72)
 
   # plot the distribution of the sample corresponding to the value of
   # kernel correlation under investigation for the Gaussian example
@@ -255,14 +274,14 @@ for (i in seq_len(cases)) {
           legend.title = element_blank(),
           legend.text = element_text(family = "LM Roman 10", size = 30, face = "bold")) +
     # set the limits of the x axis
-    xlim(c(190, 210))
+    xlim(c(160, 240))
 
   # add the plot to the file and close the file to save it
   print(a)
   dev.off()
 
   # open the file to save the plot
-  png(paste("output/plots/penguins_hdp", corr, ".png", sep = ""), width = 900, height = 840, units = "px", res = 72)
+  png(paste("output/plots/penguins_unbalanced_hdp", corr, ".png", sep = ""), width = 900, height = 840, units = "px", res = 72)
 
   # plot the distribution of the sample corresponding to the value of
   # kernel correlation under investigation for the hDP
@@ -283,7 +302,7 @@ for (i in seq_len(cases)) {
           legend.title = element_blank(),
           legend.text = element_text(family = "LM Roman 10", size = 30, face = "bold")) +
     # set the limits of the x axis
-    xlim(c(150, 250))
+    xlim(c(100, 300))
 
   # add the plot to the file and close the file to save it
   print(b)
@@ -328,7 +347,7 @@ gauVShdp_df <- cbind(corr_df, value = val_gauVShdp)
 max_val <- max(c(val_gauVSgau, val_hdpVShdp, val_gauVShdp))
 
 # open the file to save the plot
-png("output/plots/penguins_gauVSgau.png", width = 900, height = 840, units = "px", res = 72)
+png("output/plots/penguins_unbalanced_gauVSgau.png", width = 900, height = 840, units = "px", res = 72)
 
 # make a tile plot comparing cases within the Gaussian example
 ggplot(gauVSgau_df, aes(x = corr1, y = corr2, fill = value)) +
@@ -353,7 +372,7 @@ ggplot(gauVSgau_df, aes(x = corr1, y = corr2, fill = value)) +
 dev.off()
 
 # open the file to save the plot
-png("output/plots/penguins_hdpVShdp.png", width = 900, height = 840, units = "px", res = 72)
+png("output/plots/penguins_unbalanced_hdpVShdp.png", width = 900, height = 840, units = "px", res = 72)
 
 # make a tile plot comparing cases within the hDP
 ggplot(hdpVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
@@ -378,7 +397,7 @@ ggplot(hdpVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
 dev.off()
 
 # open the file to save the plot
-png("output/plots/penguins_gauVShdp.png", width = 900, height = 840, units = "px", res = 72)
+png("output/plots/penguins_unbalanced_gauVShdp.png", width = 900, height = 840, units = "px", res = 72)
 
 # make a tile plot comparing cases across the Gaussian example and the hDP
 ggplot(gauVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
@@ -401,4 +420,5 @@ ggplot(gauVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
 
 # close the file to save the plot
 dev.off()
+
 
