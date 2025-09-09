@@ -100,10 +100,10 @@ n1 <- sum(n1_all)
 n2 <- sum(n2_all)
 
 # compute the means for each group
-m1 <- flipper_counts %>%
+X1_bar <- flipper_counts %>%
   summarise(sum(X * Ncusts1) / sum(Ncusts1)) %>%
   as.numeric()
-m2 <- flipper_counts %>%
+X2_bar <- flipper_counts %>%
   summarise(sum(X * Ncusts2) / sum(Ncusts2)) %>%
   as.numeric()
 
@@ -133,19 +133,19 @@ for (i in seq_len(cases)) {
   rho <- compute_rho(corr, t_sq, v, sigma)
 
   # compute the marginal means
-  mu1 <- (n1 * m1 + n1 * n2 * tau_sq / s_sq * (1 - rho^2) * m1 + rho * n2 * m2) / (s_sq / tau_sq + n1 + n2 + n1 * n2 * tau_sq / s_sq * (1 - rho^2))
-  mu2 <- (n2 * m2 + n1 * n2 * tau_sq / s_sq * (1 - rho^2) * m2 + rho * n1 * m1) / (s_sq / tau_sq + n1 + n2 + n1 * n2 * tau_sq / s_sq * (1 - rho^2))
+  theta1 <- tau_sq * ((s_sq + n2 * tau_sq * (1 - rho^2)) * n1 * X1_bar + s_sq * rho * n2 * X2_bar) / (s_sq^2 + (n1 + n2) * s_sq * tau_sq + n1 * n2 * tau_sq^2 * (1 - rho^2))
+  theta2 <- tau_sq * ((s_sq + n1 * tau_sq * (1 - rho^2)) * n2 * X2_bar + s_sq * rho * n1 * X1_bar) / (s_sq^2 + (n1 + n2) * s_sq * tau_sq + n1 * n2 * tau_sq^2 * (1 - rho^2))
 
   # compute the marginal variances
-  V1 <- s_sq * (s_sq / tau_sq + n1 + n2 + 1 + n2 * (n1 + 1) * tau_sq / s_sq * (1 - rho^2)) / (s_sq / tau_sq + n1 + n2 + n1 * n2 * tau_sq / s_sq * (1 - rho^2))
-  V2 <- s_sq * (s_sq / tau_sq + n1 + n2 + 1 + n1 * (n2 + 1) * tau_sq / s_sq * (1 - rho^2)) / (s_sq / tau_sq + n1 + n2 + n1 * n2 * tau_sq / s_sq * (1 - rho^2))
+  Sigma11 <- s_sq + s_sq * tau_sq * (s_sq + n2 * tau_sq * (1 - rho^2)) / (s_sq^2 + (n1 + n2) * s_sq * tau_sq + n1 * n2 * tau_sq^2 * (1 - rho^2))
+  Sigma22 <- s_sq + s_sq * tau_sq * (s_sq + n1 * tau_sq * (1 - rho^2)) / (s_sq^2 + (n1 + n2) * s_sq * tau_sq + n1 * n2 * tau_sq^2 * (1 - rho^2))
 
   # set the seed for reproducibility
   set.seed(2)
 
   # generate the samples
-  X1_gau <- rnorm(M, mean = mu1, sd = sqrt(V1))
-  X2_gau <- rnorm(M, mean = mu2, sd = sqrt(V2))
+  X1_gau <- rnorm(M, mean = theta1, sd = sqrt(Sigma11))
+  X2_gau <- rnorm(M, mean = theta2, sd = sqrt(Sigma22))
 
   # add the samples to the `X_gau` data frame
   X_gau <- rbind(X_gau,

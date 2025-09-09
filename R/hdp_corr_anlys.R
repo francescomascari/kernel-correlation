@@ -249,21 +249,12 @@ hdp_corr_anlys <- function(
   # second component of the variance of the baseline
   V0_2 <- mean_W0^2 * int_cross_bsln + 2 * mean_W0 * int_cross_bsln_mean_tabs + int_cross_mean_tabs
 
-  print(c(n1, n2, l_tot))
-  print(c(c, c0))
-  print(c(V1_1 / R, V1_2 / R, V1_3))
-  print(c(V2_1 / R, V2_2 / R, V2_3))
-  print(c(V0_1 / R, V0_2))
-  print(c(mean_W0, mean_W_vec))
-
   # variances of the two groups
   var1 <- V1_1 / R + V1_2 / R + V1_3 + c^2 / (c + n1)^2 * (V0_1 / R - V0_2)
   var2 <- V2_1 / R + V2_2 / R + V2_3 + c^2 / (c + n2)^2 * (V0_1 / R - V0_2)
 
   # covariance
   cov <- c^2 / ((c + n1) * (c + n2)) * (V0_1 / R - V0_2)
-
-  print(c(var1, var2, cov))
 
   return(cov / sqrt(var1 * var2))
 }

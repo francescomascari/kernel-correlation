@@ -76,8 +76,8 @@ rho_df <- as.data.frame(rho_mat) %>%
   # mutate sigma as a factor variable for grouping
   mutate(sigma = as.factor(sigma))
 
-# open the file to save the plot
-png("output/plots/par_vs_npar_rho_plot.png", width = 900, height = 840, units = "px", res = 72)
+# open te file to save the plot
+png(filename = "output/plots/par_vs_npar_rho_plot.png", width = 900, height = 840, units = "px", res = 72)
 
 # plot the values of `rho` vs the values of the kernel correlation
 ggplot(rho_df, aes(x = corr, y = rho, color = sigma, shape = sigma)) +
@@ -96,7 +96,7 @@ ggplot(rho_df, aes(x = corr, y = rho, color = sigma, shape = sigma)) +
   # set the fonts of the plot to LaTeX style
   theme(axis.title = element_text(vjust = 0, family = "LM Roman 10", size = 30, face="bold"),
         axis.text = element_text(size = 20, family = "LM Roman 10", face = "bold"),
-        panel.grid = element_line(size = 1.5),
+        panel.grid = element_line(linewidth = 1.5),
         legend.position = "top",
         legend.title = element_blank(),
         legend.text = element_text(family = "LM Roman 10", size = 20, face = "bold"))
@@ -145,7 +145,7 @@ ggplot(c0_df, aes(x = corr, y = c0, color = sigma, shape = sigma)) +
   # set the fonts of the plot to LaTeX style
   theme(axis.title = element_text(vjust = 0, family="LM Roman 10", size = 30,face="bold"),
         axis.text = element_text(size = 20, family="LM Roman 10", face = "bold"),
-        panel.grid = element_line(size = 1.5),
+        panel.grid = element_line(linewidth = 1.5),
         legend.position = "top",
         legend.title = element_blank(),
         legend.text = element_text(family = "LM Roman 10", size = 20, face = "bold"))
@@ -181,7 +181,7 @@ ggplot(c_df, aes(x = corr, y = c, color = sigma, shape = sigma)) +
   geom_line(linewidth = 2) +
   geom_point(size = 6) +
   # add axis labels
-  labs(y = expression(c[0]),
+  labs(y = expression(c),
        x = bquote(bold(Corr[k]))) +
   # set the scale of
   scale_y_continuous(transform = "log10") +
@@ -194,7 +194,7 @@ ggplot(c_df, aes(x = corr, y = c, color = sigma, shape = sigma)) +
   # set the fonts of the plot to LaTeX style
   theme(axis.title = element_text(vjust = 0, family="LM Roman 10", size = 30,face="bold"),
         axis.text = element_text(size = 20, family="LM Roman 10", face = "bold"),
-        panel.grid = element_line(size = 1.5),
+        panel.grid = element_line(linewidth = 1.5),
         legend.position = "top",
         legend.title = element_blank(),
         legend.text = element_text(family = "LM Roman 10", size = 20, face = "bold"))
@@ -225,7 +225,7 @@ set.seed(1)
 # and store their mean
 n1 <- 200
 X1 <- hdp_XT_sampler(n1, 0, c = 10, c0 = 10, P00 = function(n) {rnorm(n, mean = -1, sd = sqrt(2))})[, "X"]
-m1 <- mean(X1)
+X1_bar <- mean(X1)
 
 # generate 10 data points for the second group from an hDP
 # with concentration parameters `c0 = 10` and `c = 10`
@@ -233,7 +233,7 @@ m1 <- mean(X1)
 # and store their mean
 n2 <- 10
 X2 <- hdp_XT_sampler(0, n2, c = 10, c0 = 10, P00 = function(n) {rnorm(n, mean = 1, sd = sqrt(2))})[, "X"]
-m2 <- mean(X2)
+X2_bar <- mean(X2)
 
 # save the generated data points in a matrix with all the unique dishes
 # with the frequencies of tables and customers
@@ -277,19 +277,19 @@ for (i in seq_len(cases)) {
   rho <- compute_rho(corr, t_sq, v, sigma)
 
   # compute the marginal means
-  mu1 <- (n1 * m1 + n1 * n2 * tau_sq / s_sq * (1 - rho^2) * m1 + rho * n2 * m2) / (s_sq / tau_sq + n1 + n2 + n1 * n2 * tau_sq / s_sq * (1 - rho^2))
-  mu2 <- (n2 * m2 + n1 * n2 * tau_sq / s_sq * (1 - rho^2) * m2 + rho * n1 * m1) / (s_sq / tau_sq + n1 + n2 + n1 * n2 * tau_sq / s_sq * (1 - rho^2))
+  theta1 <- tau_sq * ((s_sq + n2 * tau_sq * (1 - rho^2)) * n1 * X1_bar + s_sq * rho * n2 * X2_bar) / (s_sq^2 + (n1 + n2) * s_sq * tau_sq + n1 * n2 * tau_sq^2 * (1 - rho^2))
+  theta2 <- tau_sq * ((s_sq + n1 * tau_sq * (1 - rho^2)) * n2 * X2_bar + s_sq * rho * n1 * X1_bar) / (s_sq^2 + (n1 + n2) * s_sq * tau_sq + n1 * n2 * tau_sq^2 * (1 - rho^2))
 
   # compute the marginal variances
-  V1 <- s_sq * (s_sq / tau_sq + n1 + n2 + 1 + n2 * (n1 + 1) * tau_sq / s_sq * (1 - rho^2)) / (s_sq / tau_sq + n1 + n2 + n1 * n2 * tau_sq / s_sq * (1 - rho^2))
-  V2 <- s_sq * (s_sq / tau_sq + n1 + n2 + 1 + n1 * (n2 + 1) * tau_sq / s_sq * (1 - rho^2)) / (s_sq / tau_sq + n1 + n2 + n1 * n2 * tau_sq / s_sq * (1 - rho^2))
+  Sigma11 <- s_sq + s_sq * tau_sq * (s_sq + n2 * tau_sq * (1 - rho^2)) / (s_sq^2 + (n1 + n2) * s_sq * tau_sq + n1 * n2 * tau_sq^2 * (1 - rho^2))
+  Sigma22 <- s_sq + s_sq * tau_sq * (s_sq + n1 * tau_sq * (1 - rho^2)) / (s_sq^2 + (n1 + n2) * s_sq * tau_sq + n1 * n2 * tau_sq^2 * (1 - rho^2))
 
   # set the seed for reproducibility
   set.seed(2)
 
   # generate the samples
-  X1_gau <- rnorm(M, mean = mu1, sd = sqrt(V1))
-  X2_gau <- rnorm(M, mean = mu2, sd = sqrt(V2))
+  X1_gau <- rnorm(M, mean = theta1, sd = sqrt(Sigma11))
+  X2_gau <- rnorm(M, mean = theta2, sd = sqrt(Sigma22))
 
   # add the samples to the `X_gau` data frame
   X_gau <- rbind(X_gau,
@@ -413,7 +413,7 @@ for (i in seq_len(cases)) {
     # set the fonts of the plot to LaTeX style
     theme(axis.title = element_blank(),
           axis.text = element_text(size = 30, family = "LM Roman 10", face = "bold"),
-          panel.grid = element_line(size = 1.5),
+          panel.grid = element_line(linewidth = 1.5),
           legend.position = "top",
           legend.title = element_blank(),
           legend.text = element_text(family = "LM Roman 10", size = 30, face = "bold")) +
@@ -442,7 +442,7 @@ for (i in seq_len(cases)) {
     # set the fonts of the plot to LaTeX style
     theme(axis.title = element_blank(),
           axis.text = element_text(size = 30, family = "LM Roman 10", face = "bold"),
-          panel.grid = element_line(size = 1.5),
+          panel.grid = element_line(linewidth = 1.5),
           legend.position = "top",
           legend.title = element_blank(),
           legend.text = element_text(family = "LM Roman 10", size = 30, face = "bold")) +
@@ -511,7 +511,7 @@ ggplot(gauVSgau_df, aes(x = corr1, y = corr2, fill = value)) +
   # set the fonts of the plot to LaTeX style
   theme(axis.title = element_text(vjust = 0, family = "LM Roman 10", size = 30, face = "bold"),
         axis.text = element_text(size = 20, family = "LM Roman 10", face = "bold"),
-        panel.grid = element_line(size = 1.5),
+        panel.grid = element_line(linewidth = 1.5),
         legend.position = "none")
 
 # close the file to save the plot
@@ -536,7 +536,7 @@ ggplot(hdpVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
   # set the fonts of the plot to LaTeX style
   theme(axis.title = element_text(vjust = 0, family = "LM Roman 10", size = 30, face = "bold"),
         axis.text = element_text(size = 20, family = "LM Roman 10", face = "bold"),
-        panel.grid = element_line(size = 1.5),
+        panel.grid = element_line(linewidth = 1.5),
         legend.position = "none")
 
 # close the file to save the plot
@@ -561,7 +561,7 @@ ggplot(gauVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
   # set the fonts of the plot to LaTeX style
   theme(axis.title = element_text(vjust = 0, family = "LM Roman 10", size = 30, face = "bold"),
         axis.text = element_text(size = 20, family = "LM Roman 10", face = "bold"),
-        panel.grid = element_line(size = 1.5),
+        panel.grid = element_line(linewidth = 1.5),
         legend.position = "none")
 
 # close the file to save the plot
