@@ -57,33 +57,29 @@ quartiles_anlys <- df_val %>%
   dplyr::filter(Method == "Analytics") %>%
   reframe(y = round(quantile(Value, c(.25, .5, .75)), digits = 4))
 
-# open the file to save the plot
-png("output/plots/smpl_vs_anlys_plot.png", width = 900, height = 840, units = "px", res = 72)
-
 # make a boxplot of the values obtained according to the two algorithms
 # over the `reps` run
-ggplot() +
-  geom_boxplot(data = df_val, aes(x  = Method, y = Value, fill = Method), linewidth = 0.75, show.legend = FALSE) +
+p <- ggplot() +
+  geom_boxplot(data = df_val, aes(x  = Method, y = Value, fill = Method), linewidth = 1.5, show.legend = FALSE) +
   # add labels referring to the values of the quartiles for each boxplot
   geom_text(data = quartiles_anlys, aes(x = "Analytics", y = y + sign(y-y[2])*0.05, label = y),
             nudge_x = .4,
             hjust = 0,
-            size = 5,
-            family = "LM Roman 10") +
+            size = 7.5) +
   geom_text(data = quartiles_smpl, aes(x = "Sampling", y = y + sign(y-y[2])*0.005, label = y),
             nudge_x = .4,
             hjust = 0,
-            size = 5,
-            family = "LM Roman 10") +
+            size = 7.5) +
   # set the color of the boxplot for each method
   scale_fill_manual(name = "Method", values = c("Analytics" = "firebrick", "Sampling" = "forestgreen")) +
   # se the axis labels
-  labs(y = bquote(bold(Corr[k])), x = NULL) +
+  labs(x = NULL,
+       y = "$\\mathbb{C}\\mathrm{orr}_{k}$") +
   # add a theme for better readability
   theme_classic() +
   # set the fonts of the plot to LaTeX style
-  theme(axis.title = element_text(vjust = 0, family = "LM Roman 10", size = 30, face = "bold"),
-        axis.text = element_text(size = 20, family = "LM Roman 10", face = "bold"))
+  theme(axis.title = element_text(vjust = 0, size = 40),
+        axis.text = element_text(size = 40))
 
-# close the file to save the plot
-dev.off()
+# save the plot as a png file
+fancy_png(plot = p, out_path = "output/plots/smpl_vs_anlys_plot.png")

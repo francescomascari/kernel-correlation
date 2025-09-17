@@ -57,7 +57,7 @@ sigma_cases <- length(sigma_vec)
 # for every value of sigma
 for (j in seq_len(sigma_cases)) {
 
-  # set the parameter `sigma` of the kernel correlation
+  # set the parameter `sigma` of the Gaussian kernel
   par_k <- list(sigma = sigma_vec[j])
   for (i in seq_len(cases)) {
     # store the sample sizes under investigation
@@ -96,7 +96,7 @@ beta_cases <- length(beta_vec)
 # for every value of beta
 for (j in seq_len(beta_cases)) {
 
-  # set the parameter `beta` of the kernel correlation
+  # set the parameter `beta` of the Laplace kernel
   par_k <- list(beta = beta_vec[j])
   for (i in seq_len(cases)) {
     # store the sample sizes under investigation
@@ -129,13 +129,13 @@ for (j in seq_len(beta_cases)) {
 k <- "setwise"
 
 # inizialize the different values of `right_lim` for the set-wise kernel
-right_lim_vec <- c(.1,.5,.9)
+right_lim_vec <- c(.1, .5, .9)
 right_lim_cases <- length(right_lim_vec)
 
 # for every value of `right_lim`
 for (j in seq_len(right_lim_cases)) {
 
-  # set the parameter `beta` of the kernel correlation
+  # set the interval of the set-wise kernel
   par_k <- list(left_lim = 0, right_lim = right_lim_vec[j])
   for (i in seq_len(cases)) {
     # store the sample sizes under investigation

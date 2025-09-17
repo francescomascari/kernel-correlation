@@ -56,17 +56,36 @@ sigma <- sqrt(t_sq / (1 / (1 - v)^2 - 1))
 s_sq <- compute_s_sq(t_sq, v, sigma)
 tau_sq <- compute_tau_sq(t_sq, v, sigma)
 
-library(palmerpenguins)
-
 # Load the penguins dataset
+library(palmerpenguins)
 data(penguins)
 
 # Clean the penguins dataset
 penguins_clean <- penguins %>% drop_na()
 
-# save the data in a matrix with all the unique values and their counts
-# Calculate Ncusts1 (male occurrences) and Ncusts2 (female occurrences)
-flipper_counts <- penguins_clean %>%
+# create unbalanced datsaset
+# Set a seed for reproducibility, so you get the same 10 females every time
+set.seed(40)
+
+# Separate all the male penguins
+males <- penguins_clean %>%
+  dplyr::filter(sex == "male")
+
+# Randomly sample exactly 10 female penguins
+females_sample <- penguins_clean %>%
+  dplyr::filter(sex == "female") %>%
+  slice_sample(n = 5)
+
+# Combine all males with the 10-female sample to create the unbalanced dataset
+penguins_unbalanced <- bind_rows(males, females_sample)
+
+# Check the new counts of males and females
+penguins_unbalanced %>%
+  count(sex)
+
+# Calculate Ncusts1 (female occurrences) and Ncusts2 (male occurrences)
+# from the new 'penguins_unbalanced' dataset
+flipper_counts <- penguins_unbalanced %>%
   group_by(flipper_length_mm, sex) %>%
   summarise(count = n(), .groups = 'drop') %>%
   pivot_wider(names_from = sex, values_from = count, values_fill = 0) %>%
@@ -143,7 +162,6 @@ write.csv(X_gau, file = "output/results/penguins_X_gau.csv", row.names = FALSE)
 
 
 ## PART 2.2 : Hierarchical Dirichlet Process
-
 if (n1 != 0 || n2 != 0) {
   seen_q1_mat <- lapply(n1_all, FUN = function(times) {rep(1, times)})
   seen_q2_mat <- lapply(n2_all, FUN = function(times) {rep(1, times)})
@@ -187,11 +205,11 @@ for (i in seq_len(cases)) {
     seen_mat <- cbind(flipper_counts, "Ntabs" = l_vec)
 
     # sample one value from the first group and save it in `X1_gau`
-    joint_vals1 <- hdp_mat_sampler(1, 0, seen = seen_mat, smpl_method = "alt", start = 1, c0 = c0, c = c, P00 = function(n) {rnorm(n, mean = 200, sd = sqrt(10))})$new_X
+    joint_vals1 <- hdp_mat_sampler(1, 0, seen = seen_mat, smpl_method = "alt", start = 1, c0 = c0, c = c, P00 = function(n) {rnorm(n, mean = 200, sd = 10)})$new_X
     X1_hdp <- c(X1_hdp, joint_vals1[joint_vals1[, "group"] == 1, "X"][1])
 
     # sample one value from the second group and save it in `X2_gau`
-    joint_vals2 <- hdp_mat_sampler(0, 1, seen = seen_mat, smpl_method = "alt", start = 2, c0 = c0, c = c, P00 = function(n) {rnorm(n, mean = 200, sd = sqrt(10))})$new_X
+    joint_vals2 <- hdp_mat_sampler(0, 1, seen = seen_mat, smpl_method = "alt", start = 2, c0 = c0, c = c, P00 = function(n) {rnorm(n, mean = 200, sd = 10)})$new_X
     X2_hdp <- c(X2_hdp, joint_vals2[joint_vals2[, "group"] == 2, "X"][1])
 
     # Gibbs update
@@ -233,15 +251,12 @@ for (i in seq_len(cases)) {
   # store the value of the kernel correlation for the case under investigation
   corr <- xi_vec[i]
 
-  # open the file to save the plot
-  png(paste("output/plots/penguins_gau", corr, ".png", sep = ""), width = 900, height = 840, units = "px", res = 72)
-
   # plot the distribution of the sample corresponding to the value of
   # kernel correlation under investigation for the Gaussian example
-  a <- ggplot(subset(X_gau, Corr == as.character(corr)), aes(x = X, color = Group, linetype = Group)) +
+  p1 <- ggplot(subset(X_gau, Corr == as.character(corr)), aes(x = X, color = Group, linetype = Group)) +
     # make two density plots: one for the inner gray part, one for the border
-    geom_density(position = "identity", fill = scales::alpha("darkgray", 0.66), linewidth = 2) +
-    geom_density(position = "identity", fill = NA, linewidth = 2) +
+    geom_density(position = "identity", fill = scales::alpha("darkgray", 0.67), linewidth = 0) +
+    geom_density(position = "identity", fill = NA, linewidth = 3) +
     # set the color and the linetype according to the group
     scale_color_manual(values = c("Group 1" = "firebrick", "Group 2" = "forestgreen")) +
     scale_linetype_manual(values = c("Group 1" = "solid", "Group 2" = "dashed")) +
@@ -249,27 +264,24 @@ for (i in seq_len(cases)) {
     theme_classic() +
     # set the fonts of the plot to LaTeX style
     theme(axis.title = element_blank(),
-          axis.text = element_text(size = 30, family = "LM Roman 10", face = "bold"),
-          panel.grid = element_line(size = 1.5),
+          axis.text = element_text(size = 30),
           legend.position = "top",
           legend.title = element_blank(),
-          legend.text = element_text(family = "LM Roman 10", size = 30, face = "bold")) +
-    # set the limits of the x axis
-    xlim(c(190, 210))
+          legend.text = element_text(size = 30, face = "bold")) +
+    # set the limits of the axes
+    xlim(c(175, 210)) +
+    ylim(c(0, 0.75))
 
-  # add the plot to the file and close the file to save it
-  print(a)
-  dev.off()
+  # save the plot as a png file
+  fancy_png(plot = p1, out_path = paste("output/plots/penguins_gau", corr, ".png", sep = ""))
 
-  # open the file to save the plot
-  png(paste("output/plots/penguins_hdp", corr, ".png", sep = ""), width = 900, height = 840, units = "px", res = 72)
 
   # plot the distribution of the sample corresponding to the value of
   # kernel correlation under investigation for the hDP
-  b <- ggplot(subset(X_hdp, Corr == as.character(corr)), aes(x = X, y = after_stat(density), color = Group, linetype = Group)) +
+  p2 <- ggplot(subset(X_hdp, Corr == as.character(corr)), aes(x = X, y = after_stat(density), color = Group, linetype = Group)) +
     # make two histogram plots: one for the inner gray part, one for the border
-    geom_histogram(position = "identity", fill = scales::alpha("darkgray", 0.66), linewidth = 2) + 
-    geom_histogram(position = "identity", fill = NA, linewidth = 2) +
+    geom_histogram(position = "identity", fill = scales::alpha("darkgray", 0.67), linewidth = 0) + 
+    geom_histogram(position = "identity", fill = NA, linewidth = 3) +
     # set the color and the linetype according to the group
     scale_color_manual(values = c("Group 1" = "firebrick", "Group 2" = "forestgreen")) +
     scale_linetype_manual(values = c("Group 1" = "solid", "Group 2" = "dashed")) +
@@ -277,17 +289,16 @@ for (i in seq_len(cases)) {
     theme_classic() +
     # set the fonts of the plot to LaTeX style
     theme(axis.title = element_blank(),
-          axis.text = element_text(size = 30, family = "LM Roman 10", face = "bold"),
-          panel.grid = element_line(size = 1.5),
+          axis.text = element_text(size = 30),
           legend.position = "top",
           legend.title = element_blank(),
-          legend.text = element_text(family = "LM Roman 10", size = 30, face = "bold")) +
-    # set the limits of the x axis
-    xlim(c(150, 250))
+          legend.text = element_text(size = 30, face = "bold")) +
+    # set the limits of the axes
+    xlim(c(160, 240)) +
+    ylim(c(0, 0.2))
 
-  # add the plot to the file and close the file to save it
-  print(b)
-  dev.off()
+    # save the plot as a png file
+    fancy_png(plot = p2, out_path = paste("output/plots/penguins_hdp", corr, ".png", sep = ""))
 }
 
 
@@ -327,78 +338,73 @@ gauVShdp_df <- cbind(corr_df, value = val_gauVShdp)
 # to set the upper limit of the color gradient
 max_val <- max(c(val_gauVSgau, val_hdpVShdp, val_gauVShdp))
 
-# open the file to save the plot
-png("output/plots/penguins_gauVSgau.png", width = 900, height = 840, units = "px", res = 72)
-
-# make a tile plot comparing cases within the Gaussian example
-ggplot(gauVSgau_df, aes(x = corr1, y = corr2, fill = value)) +
-  geom_tile(color = "white") +
+# make a tile plot comparing cases within the Gaussian case
+p <- ggplot(gauVSgau_df, aes(x = corr1, y = corr2, fill = value)) +
+  geom_tile(color = "white", linewidth = 2) +
   # add the actual values of the absolute distances
-  geom_text(aes(label = sprintf("%.2f", value)), color = "black", family="LM Roman 10", size = 8, fontface = "bold", show.legend = FALSE) +
+  geom_text(aes(label = sprintf("%.2f", value)), color = "black", size = 10, fontface = "bold") +
   # add a gradient scale for readability
   scale_fill_gradientn(colours = c("forestgreen", "firebrick"),
                        limits = c(0, max_val)) +
   # add axis labels
-  labs(x = "Correlation: Gaussian case",
-       y = "Correlation: Gaussian case") +
+  labs(x = "$\\mathbb{C}\\mathrm{orr}_{k}$: Gaussian model",
+       y = "$\\mathbb{C}\\mathrm{orr}_{k}$: Gaussian model") +
   # add a theme for better readability
   theme_classic() +
   # set the fonts of the plot to LaTeX style
-  theme(axis.title = element_text(vjust = 0, family = "LM Roman 10", size = 30, face = "bold"),
-        axis.text = element_text(size = 20, family = "LM Roman 10", face = "bold"),
-        panel.grid = element_line(size = 1.5),
-        legend.position = "none")
+  theme(
+    axis.title = element_text(vjust = 0, size = 40),
+    axis.text  = element_text(size = 30),
+    legend.position = "none"
+  )
 
-# close the file to save the plot
-dev.off()
+# save the plot as a png file
+fancy_png(plot = p, out_path = "output/plots/penguins_gauVSgau.png")
 
-# open the file to save the plot
-png("output/plots/penguins_hdpVShdp.png", width = 900, height = 840, units = "px", res = 72)
 
 # make a tile plot comparing cases within the hDP
-ggplot(hdpVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
-  geom_tile(color = "white") +
+p <- ggplot(hdpVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
+  geom_tile(color = "white", linewidth = 2) +
   # add the actual values of the absolute distances
-  geom_text(aes(label = sprintf("%.2f", value)), color = "black", family="LM Roman 10", size = 8, fontface = "bold", show.legend = FALSE) +
+  geom_text(aes(label = sprintf("%.2f", value)), color = "black", size = 10, fontface = "bold") +
   # add a gradient scale for readability
   scale_fill_gradientn(colours = c("forestgreen", "firebrick"),
-                       limits = c(0, max_val + 0.01)) +
+                       limits = c(0, max_val)) +
   # add axis labels
-  labs(x = "Correlation: hDP case",
-       y = "Correlation: hDP case") +
+  labs(x = "$\\mathbb{C}\\mathrm{orr}_{k}$: hDP",
+       y = "$\\mathbb{C}\\mathrm{orr}_{k}$: hDP") +
   # add a theme for better readability
   theme_classic() +
   # set the fonts of the plot to LaTeX style
-  theme(axis.title = element_text(vjust = 0, family = "LM Roman 10", size = 30, face = "bold"),
-        axis.text = element_text(size = 20, family = "LM Roman 10", face = "bold"),
-        panel.grid = element_line(size = 1.5),
-        legend.position = "none")
+  theme(
+    axis.title = element_text(vjust = 0, size = 40),
+    axis.text  = element_text(size = 30),
+    legend.position = "none"
+  )
 
-# close the file to save the plot
-dev.off()
+# save the plot as a png file
+fancy_png(plot = p, out_path = "output/plots/penguins_hdpVShdp.png")
 
-# open the file to save the plot
-png("output/plots/penguins_gauVShdp.png", width = 900, height = 840, units = "px", res = 72)
 
-# make a tile plot comparing cases across the Gaussian example and the hDP
-ggplot(gauVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
-  geom_tile(color = "white") +
+# make a tile plot comparing cases within the hDP
+p <- ggplot(gauVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
+  geom_tile(color = "white", linewidth = 2) +
   # add the actual values of the absolute distances
-  geom_text(aes(label = sprintf("%.2f", value)), color = "black", family="LM Roman 10", size = 8, fontface = "bold", show.legend = FALSE) +
+  geom_text(aes(label = sprintf("%.2f", value)), color = "black", size = 10, fontface = "bold") +
   # add a gradient scale for readability
   scale_fill_gradientn(colours = c("forestgreen", "firebrick"),
-                       limits = c(0, max_val + 0.01)) +
+                       limits = c(0, max_val)) +
   # add axis labels
-  labs(x = "Correlation: Gaussian case",
-       y = "Correlation: hDP case") +
+  labs(x = "$\\mathbb{C}\\mathrm{orr}_{k}$: Gaussian case",
+       y = "$\\mathbb{C}\\mathrm{orr}_{k}$: hDP") +
   # add a theme for better readability
   theme_classic() +
   # set the fonts of the plot to LaTeX style
-  theme(axis.title = element_text(vjust = 0, family = "LM Roman 10", size = 30, face = "bold"),
-        axis.text = element_text(size = 20, family = "LM Roman 10", face = "bold"),
-        panel.grid = element_line(size = 1.5),
-        legend.position = "none")
+  theme(
+    axis.title = element_text(vjust = 0, size = 40),
+    axis.text  = element_text(size = 30),
+    legend.position = "none"
+  )
 
-# close the file to save the plot
-dev.off()
-
+# save the plot as a png file
+fancy_png(plot = p, out_path = "output/plots/penguins_gauVShdp.png")

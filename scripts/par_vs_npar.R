@@ -76,17 +76,14 @@ rho_df <- as.data.frame(rho_mat) %>%
   # mutate sigma as a factor variable for grouping
   mutate(sigma = as.factor(sigma))
 
-# open te file to save the plot
-png(filename = "output/plots/par_vs_npar_rho_plot.png", width = 900, height = 840, units = "px", res = 72)
-
 # plot the values of `rho` vs the values of the kernel correlation
-ggplot(rho_df, aes(x = corr, y = rho, color = sigma, shape = sigma)) +
+p_rho <- ggplot(rho_df, aes(x = corr, y = rho, color = sigma, shape = sigma)) +
   # plot both the lines and the individual points
-  geom_line(linewidth = 2) +
-  geom_point(size = 6) +
+  geom_line(linewidth = 3) +
+  geom_point(size = 9) +
   # add axis labels
-  labs(y = expression(rho),
-       x = bquote(bold(Corr[k]))) +
+  labs(x = "$\\mathbb{C}\\mathrm{orr}_{k}$",
+       y = "$\\rho$") +
   # associate each value of sigma to a fill color
   scale_color_manual(values = c("purple3", "darkorange3", "lightgreen", "cyan3")) +
   # associate each value of sigma to a shape
@@ -94,15 +91,14 @@ ggplot(rho_df, aes(x = corr, y = rho, color = sigma, shape = sigma)) +
   # add a theme for better readability
   theme_classic() +
   # set the fonts of the plot to LaTeX style
-  theme(axis.title = element_text(vjust = 0, family = "LM Roman 10", size = 30, face="bold"),
-        axis.text = element_text(size = 20, family = "LM Roman 10", face = "bold"),
-        panel.grid = element_line(linewidth = 1.5),
+  theme(axis.title = element_text(vjust = 0, size = 40),
+        axis.text = element_text(size = 30),
         legend.position = "top",
         legend.title = element_blank(),
-        legend.text = element_text(family = "LM Roman 10", size = 20, face = "bold"))
+        legend.text = element_text(size = 30, face = "bold"))
 
-# close the file to save the plot
-dev.off()
+# save the plot as a png file
+fancy_png(plot = p_rho, out_path = "output/plots/par_vs_npar_rho_plot.png")
 
 
 ## PART 2.2 : Plot for `c0`
@@ -123,17 +119,14 @@ c0_df <- as.data.frame(c0_mat) %>%
   # mutate sigma as a factor variable for grouping
   mutate(sigma = as.factor(sigma))
 
-# open the file to save the plot
-png("output/plots/par_vs_npar_c0_plot.png", width = 900, height = 840, units = "px", res = 72)
-
 # plot the values of `c0` vs the values of the kernel correlation
-ggplot(c0_df, aes(x = corr, y = c0, color = sigma, shape = sigma)) +
+p_c0 <- ggplot(c0_df, aes(x = corr, y = c0, color = sigma, shape = sigma)) +
   # plot both the lines and the individual points
-  geom_line(linewidth = 2) +
-  geom_point(size = 6) +
+  geom_line(linewidth = 3) +
+  geom_point(size = 9) +
   # add axis labels
-  labs(y = expression(c[0]),
-       x = bquote(bold(Corr[k]))) +
+  labs(x = "$\\mathbb{C}\\mathrm{orr}_{k}$",
+       y = "$c_{0}$") +
   # set the scale of
   scale_y_continuous(transform = "log10") +
   # associate each value of sigma to a fill color
@@ -143,15 +136,14 @@ ggplot(c0_df, aes(x = corr, y = c0, color = sigma, shape = sigma)) +
   # add a theme for better readability
   theme_classic() +
   # set the fonts of the plot to LaTeX style
-  theme(axis.title = element_text(vjust = 0, family="LM Roman 10", size = 30,face="bold"),
-        axis.text = element_text(size = 20, family="LM Roman 10", face = "bold"),
-        panel.grid = element_line(linewidth = 1.5),
+  theme(axis.title = element_text(vjust = 0, size = 40),
+        axis.text = element_text(size = 30),
         legend.position = "top",
         legend.title = element_blank(),
-        legend.text = element_text(family = "LM Roman 10", size = 20, face = "bold"))
+        legend.text = element_text(size = 30, face = "bold"))
 
-# close the file to save the plot
-dev.off()
+# save the plot as a png file
+fancy_png(plot = p_c0, out_path = "output/plots/par_vs_npar_c0_plot.png")
 
 
 ## PART 2.3 : Plot for `c`
@@ -172,17 +164,14 @@ c_df <- as.data.frame(c_mat) %>%
   # mutate sigma as a factor variable for grouping
   mutate(sigma = as.factor(sigma))
 
-# open the file to save the plot
-png("output/plots/par_vs_npar_c_plot.png", width = 900, height = 840, units = "px", res = 72)
-
 # plot the values of `c0` vs the values of the kernel correlation
-ggplot(c_df, aes(x = corr, y = c, color = sigma, shape = sigma)) +
+p_c <- ggplot(c_df, aes(x = corr, y = c, color = sigma, shape = sigma)) +
   # plot both the lines and the individual points
-  geom_line(linewidth = 2) +
-  geom_point(size = 6) +
+  geom_line(linewidth = 3) +
+  geom_point(size = 9) +
   # add axis labels
-  labs(y = expression(c),
-       x = bquote(bold(Corr[k]))) +
+  labs(x = "$\\mathbb{C}\\mathrm{orr}_{k}$",
+       y = "$c$") +
   # set the scale of
   scale_y_continuous(transform = "log10") +
   # associate each value of sigma to a fill color
@@ -192,15 +181,14 @@ ggplot(c_df, aes(x = corr, y = c, color = sigma, shape = sigma)) +
   # add a theme for better readability
   theme_classic() +
   # set the fonts of the plot to LaTeX style
-  theme(axis.title = element_text(vjust = 0, family="LM Roman 10", size = 30,face="bold"),
-        axis.text = element_text(size = 20, family="LM Roman 10", face = "bold"),
-        panel.grid = element_line(linewidth = 1.5),
+  theme(axis.title = element_text(vjust = 0, size = 40),
+        axis.text = element_text(size = 30),
         legend.position = "top",
         legend.title = element_blank(),
-        legend.text = element_text(family = "LM Roman 10", size = 20, face = "bold"))
+        legend.text = element_text(size = 30, face = "bold"))
 
-# close the file to save the plot
-dev.off()
+# save the plot as a png file
+fancy_png(plot = p_c, out_path = "output/plots/par_vs_npar_c_plot.png")
 
 
 ## PART 3 : Data generation
@@ -231,7 +219,7 @@ X1_bar <- mean(X1)
 # with concentration parameters `c0 = 10` and `c = 10`
 # and normal baseline with mean 0 and variance 2
 # and store their mean
-n2 <- 10
+n2 <- 5
 X2 <- hdp_XT_sampler(0, n2, c = 10, c0 = 10, P00 = function(n) {rnorm(n, mean = 1, sd = sqrt(2))})[, "X"]
 X2_bar <- mean(X2)
 
@@ -396,15 +384,12 @@ for (i in seq_len(cases)) {
   # store the value of the kernel correlation for the case under investigation
   corr <- xi_vec[i]
 
-  # open the file to save the plot
-  png(paste("output/plots/par_vs_npar_gau", corr, ".png", sep = ""), width = 900, height = 840, units = "px", res = 72)
-
   # plot the distribution of the sample corresponding to the value of
   # kernel correlation under investigation for the Gaussian example
-  a <- ggplot(subset(X_gau, Corr == as.character(corr)), aes(x = X, color = Group, linetype = Group)) +
+  p1 <- ggplot(subset(X_gau, Corr == as.character(corr)), aes(x = X, color = Group, linetype = Group)) +
     # make two density plots: one for the inner gray part, one for the border
-    geom_density(position = "identity", fill = scales::alpha("darkgray", 0.66), linewidth = 2) +
-    geom_density(position = "identity", fill = NA, linewidth = 2) +
+    geom_density(position = "identity", fill = scales::alpha("darkgray", 0.67), linewidth = 0) +
+    geom_density(position = "identity", fill = NA, linewidth = 3) +
     # set the color and the linetype according to the group
     scale_color_manual(values = c("Group 1" = "firebrick", "Group 2" = "forestgreen")) +
     scale_linetype_manual(values = c("Group 1" = "solid", "Group 2" = "dashed")) +
@@ -412,28 +397,24 @@ for (i in seq_len(cases)) {
     theme_classic() +
     # set the fonts of the plot to LaTeX style
     theme(axis.title = element_blank(),
-          axis.text = element_text(size = 30, family = "LM Roman 10", face = "bold"),
-          panel.grid = element_line(linewidth = 1.5),
+          axis.text = element_text(size = 30),
           legend.position = "top",
           legend.title = element_blank(),
-          legend.text = element_text(family = "LM Roman 10", size = 30, face = "bold")) +
+          legend.text = element_text(size = 30, face = "bold")) +
     # set the limits of the axes
-    xlim(c(-4, 4)) +
-    ylim(c(0, 2))
+    xlim(c(-3.5, 3.5)) +
+    ylim(c(0, 1))
 
-  # add the plot to the file and close the file to save it
-  print(a)
-  dev.off()
+  # save the plot as a png file
+  fancy_png(plot = p1, out_path = paste("output/plots/par_vs_npar_gau", corr, ".png", sep = ""))
 
-  # open the file to save the plot
-  png(paste("output/plots/par_vs_npar_hdp", corr, ".png", sep = ""), width = 900, height = 840, units = "px", res = 72)
 
   # plot the distribution of the sample corresponding to the value of
   # kernel correlation under investigation for the hDP
-  b <- ggplot(subset(X_hdp, Corr == as.character(corr)), aes(x = X, y = after_stat(density), color = Group, linetype = Group)) +
+  p2 <- ggplot(subset(X_hdp, Corr == as.character(corr)), aes(x = X, y = after_stat(density), color = Group, linetype = Group)) +
     # make two histogram plots: one for the inner gray part, one for the border
-    geom_histogram(position = "identity", fill = scales::alpha("darkgray", 0.66), linewidth = 2) + 
-    geom_histogram(position = "identity", fill = NA, linewidth = 2) +
+    geom_histogram(position = "identity", fill = scales::alpha("darkgray", 0.67), linewidth = 0) + 
+    geom_histogram(position = "identity", fill = NA, linewidth = 3) +
     # set the color and the linetype according to the group
     scale_color_manual(values = c("Group 1" = "firebrick", "Group 2" = "forestgreen")) +
     scale_linetype_manual(values = c("Group 1" = "solid", "Group 2" = "dashed")) +
@@ -441,18 +422,16 @@ for (i in seq_len(cases)) {
     theme_classic() +
     # set the fonts of the plot to LaTeX style
     theme(axis.title = element_blank(),
-          axis.text = element_text(size = 30, family = "LM Roman 10", face = "bold"),
-          panel.grid = element_line(linewidth = 1.5),
+          axis.text = element_text(size = 30),
           legend.position = "top",
           legend.title = element_blank(),
-          legend.text = element_text(family = "LM Roman 10", size = 30, face = "bold")) +
+          legend.text = element_text(size = 30, face = "bold")) +
     # set the limits of the axes
-    ylim(c(0, 1.2)) +
-    xlim(c(-5.5, 5.5))
+    xlim(c(-5.5, 5.5)) +
+    ylim(c(0, 1.25))
 
-  # add the plot to the file and close the file to save it
-  print(b)
-  dev.off()
+  # save the plot as a png file
+  fancy_png(plot = p2, out_path = paste("output/plots/par_vs_npar_hdp", corr, ".png", sep = ""))
 }
 
 
@@ -492,77 +471,73 @@ gauVShdp_df <- cbind(corr_df, value = val_gauVShdp)
 # to set the upper limit of the color gradient
 max_val <- max(c(val_gauVSgau, val_hdpVShdp, val_gauVShdp))
 
-# open the file to save the plot
-png("output/plots/par_vs_npar_gauVSgau.png", width = 900, height = 840, units = "px", res = 72)
-
-# make a tile plot comparing cases within the Gaussian example
-ggplot(gauVSgau_df, aes(x = corr1, y = corr2, fill = value)) +
-  geom_tile(color = "white") +
+# make a tile plot comparing cases within the Gaussian case
+p <- ggplot(gauVSgau_df, aes(x = corr1, y = corr2, fill = value)) +
+  geom_tile(color = "white", linewidth = 2) +
   # add the actual values of the absolute distances
-  geom_text(aes(label = sprintf("%.2f", value)), color = "black", family="LM Roman 10", size = 8, fontface = "bold", show.legend = FALSE) +
+  geom_text(aes(label = sprintf("%.2f", value)), color = "black", size = 10, fontface = "bold") +
   # add a gradient scale for readability
   scale_fill_gradientn(colours = c("forestgreen", "firebrick"),
                        limits = c(0, max_val)) +
   # add axis labels
-  labs(x = "Correlation: Gaussian case",
-       y = "Correlation: Gaussian case") +
+  labs(x = "$\\mathbb{C}\\mathrm{orr}_{k}$: Gaussian model",
+       y = "$\\mathbb{C}\\mathrm{orr}_{k}$: Gaussian model") +
   # add a theme for better readability
   theme_classic() +
   # set the fonts of the plot to LaTeX style
-  theme(axis.title = element_text(vjust = 0, family = "LM Roman 10", size = 30, face = "bold"),
-        axis.text = element_text(size = 20, family = "LM Roman 10", face = "bold"),
-        panel.grid = element_line(linewidth = 1.5),
-        legend.position = "none")
+  theme(
+    axis.title = element_text(vjust = 0, size = 40),
+    axis.text  = element_text(size = 30),
+    legend.position = "none"
+  )
 
-# close the file to save the plot
-dev.off()
+# save the plot as a png file
+fancy_png(plot = p, out_path = "output/plots/par_vs_npar_gauVSgau.png")
 
-# open the file to save the plot
-png("output/plots/par_vs_npar_hdpVShdp.png", width = 900, height = 840, units = "px", res = 72)
 
 # make a tile plot comparing cases within the hDP
-ggplot(hdpVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
-  geom_tile(color = "white") +
+p <- ggplot(hdpVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
+  geom_tile(color = "white", linewidth = 2) +
   # add the actual values of the absolute distances
-  geom_text(aes(label = sprintf("%.2f", value)), color = "black", family="LM Roman 10", size = 8, fontface = "bold", show.legend = FALSE) +
+  geom_text(aes(label = sprintf("%.2f", value)), color = "black", size = 10, fontface = "bold") +
   # add a gradient scale for readability
   scale_fill_gradientn(colours = c("forestgreen", "firebrick"),
                        limits = c(0, max_val)) +
   # add axis labels
-  labs(x = "Correlation: hDP case",
-       y = "Correlation: hDP case") +
+  labs(x = "$\\mathbb{C}\\mathrm{orr}_{k}$: hDP",
+       y = "$\\mathbb{C}\\mathrm{orr}_{k}$: hDP") +
   # add a theme for better readability
   theme_classic() +
   # set the fonts of the plot to LaTeX style
-  theme(axis.title = element_text(vjust = 0, family = "LM Roman 10", size = 30, face = "bold"),
-        axis.text = element_text(size = 20, family = "LM Roman 10", face = "bold"),
-        panel.grid = element_line(linewidth = 1.5),
-        legend.position = "none")
+  theme(
+    axis.title = element_text(vjust = 0, size = 40),
+    axis.text  = element_text(size = 30),
+    legend.position = "none"
+  )
 
-# close the file to save the plot
-dev.off()
+# save the plot as a png file
+fancy_png(plot = p, out_path = "output/plots/par_vs_npar_hdpVShdp.png")
 
-# open the file to save the plot
-png("output/plots/par_vs_npar_gauVShdp.png", width = 900, height = 840, units = "px", res = 72)
 
-# make a tile plot comparing cases across the Gaussian example and the hDP
-ggplot(gauVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
-  geom_tile(color = "white") +
+# make a tile plot comparing cases within the hDP
+p <- ggplot(gauVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
+  geom_tile(color = "white", linewidth = 2) +
   # add the actual values of the absolute distances
-  geom_text(aes(label = sprintf("%.2f", value)), color = "black", family="LM Roman 10", size = 8, fontface = "bold", show.legend = FALSE) +
+  geom_text(aes(label = sprintf("%.2f", value)), color = "black", size = 10, fontface = "bold") +
   # add a gradient scale for readability
   scale_fill_gradientn(colours = c("forestgreen", "firebrick"),
                        limits = c(0, max_val)) +
   # add axis labels
-  labs(x = "Correlation: Gaussian case",
-       y = "Correlation: hDP case") +
+  labs(x = "$\\mathbb{C}\\mathrm{orr}_{k}$: Gaussian case",
+       y = "$\\mathbb{C}\\mathrm{orr}_{k}$: hDP") +
   # add a theme for better readability
   theme_classic() +
   # set the fonts of the plot to LaTeX style
-  theme(axis.title = element_text(vjust = 0, family = "LM Roman 10", size = 30, face = "bold"),
-        axis.text = element_text(size = 20, family = "LM Roman 10", face = "bold"),
-        panel.grid = element_line(linewidth = 1.5),
-        legend.position = "none")
+  theme(
+    axis.title = element_text(vjust = 0, size = 40),
+    axis.text  = element_text(size = 30),
+    legend.position = "none"
+  )
 
-# close the file to save the plot
-dev.off()
+# save the plot as a png file
+fancy_png(plot = p, out_path = "output/plots/par_vs_npar_gauVShdp.png")

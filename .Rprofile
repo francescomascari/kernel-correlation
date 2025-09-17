@@ -14,12 +14,27 @@ require("emulator", include.only = c("quad.form", "quad.3form"))
 # in log space
 require("matrixStats", include.only = "logSumExp")
 
+require("tikzDevice")
+require("pdftools")
+require("magick")
+# Tell LaTeX to use Latin Modern and AMS symbols
+options(
+  tikzDefaultEngine = "pdftex",
+  tikzLatexPackages = c(
+    getOption("tikzLatexPackages"),
+    "\\usepackage[T1]{fontenc}",
+    "\\usepackage[utf8]{inputenc}",
+    "\\usepackage{amsmath,amssymb}"
+  )
+)
+source("R/fancy_png.R")
+
 # package for LaTeX-style caption in plots
-require("extrafont")
+#require("extrafont")
 # REMINDER: make sure Latin Modern (LM) Roman 10
 #           is installed in your system (source: https://www.ctan.org/tex-archive/fonts/lm)
 # REMINDER: use `font_import()` the first time and after every R installation
-loadfonts() # load fonts
+#loadfonts() # load fonts
 
 ## HELPER FUNCTIONS FOR SAMPLING
 ## FROM HIERARCHICAL DIRICHLET PROCESS

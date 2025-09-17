@@ -1,7 +1,7 @@
 ## PART 1 : Data generation
 
 # store the sample size
-n <- 1000
+M <- 1000
 
 # set the seed for reproducibility
 set.seed(1234)
@@ -12,11 +12,11 @@ rho <- 1
 var_cov_mat <- matrix(c(1, rho, rho, 1), nrow = 2)
 
 # generate `n` independent realization of thetas
-thetas <- rmvnorm(n, sigma = var_cov_mat)
+thetas <- rmvnorm(M, sigma = var_cov_mat)
 
 # generate one independent sample for each group for each realization of thetas
-X <- rnorm(n, mean = thetas[, 1], sd = 1)
-Y <- rnorm(n, mean = thetas[, 2], sd = 1)
+X <- rnorm(M, mean = thetas[, 1], sd = 1)
+Y <- rnorm(M, mean = thetas[, 2], sd = 1)
 
 
 ## PART 2 : Computation of the indices

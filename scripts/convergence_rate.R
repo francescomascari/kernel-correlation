@@ -98,19 +98,17 @@ plot_mat <- pivot_longer(val_mat, cols = all_of(kernel_vec), names_to = "kernel"
   # with respect to the log of `n1 * n2`
   mutate(corr.smooth = exp(predict(lm(log(corr) ~ log(n1_n2)))))
 
-# open the file to save the plot
-png("output/plots/convergence_rate_plot.png", width = 900, height = 840, units = "px", res = 72)
-
 # make a log log plot of the values of the kernel correlation vs `n1 * n2`
-ggplot(data = plot_mat) +
+p <- ggplot(data = plot_mat) +
   scale_x_continuous(trans = "log10") +
   scale_y_continuous(trans = "log10") +
   # use the results of the linear model to plot the line
-  geom_line(aes(x = n1_n2, y = corr.smooth, color = kernel), linewidth = 2) +
+  geom_line(aes(x = n1_n2, y = corr.smooth, color = kernel), linewidth = 3) +
   # use the actual values to plot the points
-  geom_point(aes(x = n1_n2, y = corr, color = kernel, shape = kernel), size = 6) +
+  geom_point(aes(x = n1_n2, y = corr, color = kernel, shape = kernel), size = 9) +
   # add axis labels
-  labs(x = bquote(bold(n[1] * n[2])), y = bquote(bold(Corr[k]))) +
+  labs(x = "$n_{1}n_{2}$",
+       y = "$\\mathbb{C}\\mathrm{orr}_{k}$") +
   # associate each kernel value to a fill color
   scale_color_manual(values = c("gaussian" = "purple3",
                                 "laplace" = "darkorange3",
@@ -126,12 +124,11 @@ ggplot(data = plot_mat) +
   # add a theme for better readability
   theme_classic() +
   # set the fonts of the plot to LaTeX style
-  theme(axis.title = element_text(vjust = 0, family = "LM Roman 10", size = 30, face = "bold"),
-        axis.text = element_text(size = 20, family = "LM Roman 10", face = "bold"),
-        panel.grid = element_line(size = 1.5),
+  theme(axis.title = element_text(vjust = 0, size = 40),
+        axis.text = element_text(size = 30),
         legend.position = "top",
         legend.title = element_blank(),
-        legend.text = element_text(family = "LM Roman 10", size = 20, face = "bold"))
+        legend.text = element_text(size = 30))
 
-# close the file to save the plot
-dev.off()
+# save the plot as a png file
+fancy_png(plot = p, out_path = "output/plots/convergence_rate_plot.png")
