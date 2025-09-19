@@ -83,9 +83,9 @@ When opening the project `Kernel-correlation.Rproj` (e.g., via RStudio), the `.R
 - Loads essential packages:
   - `tidyverse` (data manipulation)
   - `doParallel` (parallel processing)
+  - `mvtnorm` (multivariate normal distribution)
   - `emulator::quad.form`, `quad.3form` (quadratic forms)
   - `matrixStats::logSumExp` (log-space normalization)
-  - `extrafont` (LaTeX-style font support)
   - `tikzDevice`, `pdftools`, `magick` (plot export via LaTeX/TikZ → PDF → PNG)
 - Sets up LaTeX/TikZ options for consistent plot rendering.
 - Sources all helper scripts in `R/`.
