@@ -528,7 +528,7 @@ p <- ggplot(gauVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
   scale_fill_gradientn(colours = c("forestgreen", "firebrick"),
                        limits = c(0, max_val)) +
   # add axis labels
-  labs(x = "$\\mathbb{C}\\mathrm{orr}_{k}$: Gaussian case",
+  labs(x = "$\\mathbb{C}\\mathrm{orr}_{k}$: Gaussian model",
        y = "$\\mathbb{C}\\mathrm{orr}_{k}$: hDP") +
   # add a theme for better readability
   theme_classic() +

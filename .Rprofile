@@ -1,23 +1,32 @@
-# package for data manipolation
+## PACKAGES
+
+# data manipulation
 require("tidyverse")
 
-# package for parallelization
+# parallelization
 require("doParallel")
 
-# functions for multivariate normal distributions
+# multivariate normals
 require("mvtnorm")
 
-# functions for computation of quadratic forms
+# quadratic forms
 require("emulator", include.only = c("quad.form", "quad.3form"))
 
-# function for normalization of probabilities
-# in log space
+# log-space normalization
 require("matrixStats", include.only = "logSumExp")
 
+# plot export stack (LaTeX/TikZ -> PDF -> PNG)
 require("tikzDevice")
 require("pdftools")
 require("magick")
-# Tell LaTeX to use Latin Modern and AMS symbols
+
+
+## LATEX SETUP
+
+# if no LaTeX installation with pdftex is present, install TinyTeX with:
+# tinytex::install_tinytex()
+
+# TikZ/LaTeX options 
 options(
   tikzDefaultEngine = "pdftex",
   tikzLatexPackages = c(
@@ -27,29 +36,25 @@ options(
     "\\usepackage{amsmath,amssymb}"
   )
 )
+
+
+## PROJECT HELPERS
+
+# fancy plot export
 source("R/fancy_png.R")
 
-# package for LaTeX-style caption in plots
-#require("extrafont")
-# REMINDER: make sure Latin Modern (LM) Roman 10
-#           is installed in your system (source: https://www.ctan.org/tex-archive/fonts/lm)
-# REMINDER: use `font_import()` the first time and after every R installation
-#loadfonts() # load fonts
-
-## HELPER FUNCTIONS FOR SAMPLING
-## FROM HIERARCHICAL DIRICHLET PROCESS
+# hDP sampling helpers
 source("R/hdp_mat_sampler_help.R")
 source("R/hdp_mat_sampler.R")
 source("R/hdp_XT_sampler_help.R")
 source("R/hdp_XT_sampler.R")
 source("R/hdp_XT2mat.R")
 
-
-## HELPER FUNCTIONS FOR COMPUTATIONS
+# Computation helpers
 source("R/do_outer_mat.R")
 source("R/gibbs_tabs.R")
 source("R/update_q_probs.R")
 
-## METHODS TO COMPUTE CORRELATION
+# Correlation methods
 source("R/hdp_corr_anlys.R")
 source("R/hdp_corr_smpl.R")

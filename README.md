@@ -39,6 +39,7 @@ The abstract of the manuscript is reported below:
 | File                      | Purpose                                                                     |
 | ------------------------- | --------------------------------------------------------------------------- |
 | `do_outer_mat.R`          | Builds the matrix given by kernel evaluation                                |
+| `fancy_png.R`             | Renders a plot to a high-quality PNG using LaTeX/TikZ for consistent fonts  |
 | `gibbs_tabs.R`            | Does a Gibbs step to update the table allocation in an hDP                  |
 | `hdp_corr_anlys.R`        | Computes the kernel correlation for hDP (analytics-based method)            |
 | `hdp_corr_smpl.R`         | Computes the kernel correlation for hDP (analytics-based method)            |
@@ -55,23 +56,24 @@ The abstract of the manuscript is reported below:
 `scripts/` contains all **R** scripts to perform simulations.
 | File                    | Purpose                                                                                                     |
 | ----------------------- | ----------------------------------------------------------------------------------------------------------- |
-| `convergence_rate.R`    | Studies the converge rate of the hDP a posteriori as the size of data increases                             |
-| `kernel_stability.R`    | Studies the dependence of the value of kernel correlation on the tuning of kernel parameters                |
-| `other_indx.R`          | Computes the Pearson correlation coefficient and some RKHS-based indices for the Gaussian example           |
-| `par_vs_npar.R`         | Compares borrowing of information between a parametric Gaussian model and an HDP                            |
-| `smpl_vs_anlys.R`       | Compares the sampling-based method and the analytics-based method to compute the kernel correlation for hDP |
+| `convergence_rate.R`    | Studies the converge rate of the hDP a posteriori as the size of data increases                            |
+| `kernel_stability.R`    | Studies the dependence of the value of kernel correlation on the tuning of kernel parameters                    |
+| `other_indx.R`          | Computes the Pearson correlation coefficient and some RKHS-based indices for the Gaussian example                 |
+| `par_vs_npar.R`         | Compares borrowing of information between a parametric Gaussian model and an HDP                                  |
+| `penguins.R`         | Compares borrowing of information between a parametric Gaussian model and an HDP for the Palmer Penguins data set |
+| `smpl_vs_anlys.R`       | Compares the sampling-based method and the analytics-based method to compute the kernel correlation for hDP       |
 
 
 ## Requirements
 
 - **R** (≥ 4.1.0)
-- **R packages** : `tidyverse`, `doParallel`, `mvtnorm`, `emulator`, `matrixStats`, `extrafont`
-- **System fonts** : [Latin Modern (LM) Roman 10](https://www.ctan.org/tex-archive/fonts/lm)
-    > **NOTE:** To register fonts (only once per R installation)
-                ```
-                extrafont::font_import()
-                extrafont::loadfonts()
-                ```
+- **R packages**
+  - Core workflow: `tidyverse`, `doParallel`, `mvtnorm`
+  - Math helpers: `emulator`, `matrixStats`
+  - Plot export: `tikzDevice`, `pdftools`, `magick`
+- **LaTeX toolchain**
+  - A working LaTeX installation with `pdftex`.
+    > If you do not already have it, the easiest path is the **R** package `tinytex`. Install with `tinytex::install_tinytex()`.
 
 
 ##  Automatic Setup
@@ -84,11 +86,16 @@ When opening the project `Kernel-correlation.Rproj` (e.g., via RStudio), the `.R
   - `emulator::quad.form`, `quad.3form` (quadratic forms)
   - `matrixStats::logSumExp` (log-space normalization)
   - `extrafont` (LaTeX-style font support)
-- Imports the **Latin Modern font** for plots (ensure it's installed!)
-- Sources the scripts in `R/`.
+  - `tikzDevice`, `pdftools`, `magick` (plot export via LaTeX/TikZ → PDF → PNG)
+- Sets up LaTeX/TikZ options for consistent plot rendering.
+- Sources all helper scripts in `R/`.
 
-This ensures all functions are loaded and the files in `scripts/` are ready to use.
-
+### Note on LaTeX
+The `fancy_png()` function requires a working LaTeX installation.  
+If LaTeX is not installed, you can quickly install TinyTeX by running in R:
+```r
+  tinytex::install_tinytex()
+```
 
 ## Reproducibility
 
