@@ -1,4 +1,5 @@
-## PART 1 : Data generation
+# %%
+# PART 1 : Data generation
 
 # store all the different sample sizes for group 1
 # and record the maximal
@@ -24,7 +25,8 @@ seen <- hdp_XT_sampler(n1 = n1_max, n2 = n2_max, smpl_method = "alt", start = 1,
 write.csv(seen, file = "output/results/convergence_rate_seen.csv", row.names = FALSE)
 
 
-## PART 2 : Computation of kernel correlation
+# %%
+# PART 2 : Computation of kernel correlation
 
 # import the `seen` matrix from the previous step
 seen <- as.matrix(read.csv("output/results/convergence_rate_seen.csv"))
@@ -83,7 +85,8 @@ stopImplicitCluster()
 write.csv(val_mat, file = "output/results/convergence_rate_val_mat.csv", row.names = FALSE)
 
 
-## PART 3 : Log-log plot for convergence rate
+# %%
+# PART 3 : Log-log plot for convergence rate
 
 # import the `val_mat` matrix from the previous step as a data frame
 val_mat <- read.csv("output/results/convergence_rate_val_mat.csv")

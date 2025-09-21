@@ -1,4 +1,5 @@
-## PART 1 : Data generation
+# %%
+# PART 1 : Data generation
 
 # store all the different sample sizes for both groups
 # and record the maximal
@@ -19,7 +20,8 @@ seen <- hdp_XT_sampler(n1 = n_max, n2 = n_max, P00 = runif, smpl_method = "alt",
 write.csv(seen, file = "output/results/kernel_stability_seen.csv", row.names = FALSE)
 
 
-## PART 2: Computation of kernel correlation
+# %%
+# PART 2: Computation of kernel correlation
 
 # import the `seen` matrix from the previous step
 seen <- as.matrix(read.csv("output/results/kernel_stability_seen.csv"))
@@ -44,8 +46,8 @@ registerDoParallel(cluster)
 # set the number of repetitions to average the result on
 reps <- 10
 
-
-## PART 2.1 : Gaussian kernel
+# %%
+# PART 2.1 : Gaussian kernel
 
 # store the kernel name
 k <- "gaussian"
@@ -83,8 +85,8 @@ for (j in seq_len(sigma_cases)) {
   }
 }
 
-
-## PART 2.2 : Laplace kernel
+# %%
+# PART 2.2 : Laplace kernel
 
 # store the kernel name
 k <- "laplace"
@@ -122,8 +124,8 @@ for (j in seq_len(beta_cases)) {
   }
 }
 
-
-## PART 2.3 : Set-wise kernel
+# %%
+# PART 2.3 : Set-wise kernel
 
 # store the kernel name
 k <- "setwise"

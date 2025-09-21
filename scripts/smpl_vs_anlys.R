@@ -1,4 +1,5 @@
-## PART 1: Data generation
+# %%
+# PART 1: Data generation
 
 # set the seed for reproducibility
 set.seed(1234)
@@ -11,7 +12,8 @@ seen <- seen_mat[, c("X", "Ncusts1", "Ncusts2"), drop = FALSE]
 write.csv(seen, file = "output/results/smpl_vs_anlys_seen.csv", row.names = FALSE)
 
 
-## PART 2 : Computation of kernel correlation
+# %%
+# PART 2 : Computation of kernel correlation
 
 # import the `seen` matrix from the previous step
 seen <- as.matrix(read.csv("output/results/smpl_vs_anlys_seen.csv"))
@@ -42,7 +44,8 @@ df_val <- data.frame(Value = c(smpl_vals, anal_vals), Method = as.factor(c(rep("
 write.csv(df_val, file = "output/results/smpl_vs_anlys_df_val.csv", row.names = FALSE)
 
 
-## PART 3 : Plot of the boxplots for the repetitions of the two algorithm
+# %%
+# PART 3 : Plot of the boxplots for the repetitions of the two algorithm
 
 # import the `df_val` matrix from the previous step
 df_val <- read.csv("output/results/smpl_vs_anlys_df_val.csv")

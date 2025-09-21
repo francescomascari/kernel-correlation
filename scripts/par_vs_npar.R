@@ -1,5 +1,6 @@
-## PART 1 : Functions to fix parameters given the correlation
-##          (These functions are in the Supplementary Material of the article)
+# %%
+# PART 1 : Functions to fix parameters given the correlation
+#          (These functions are in the Supplementary Material of the article)
 
 # RECALL
 # - `t_sq`   : marginal variance of the observables in the Gaussian example
@@ -42,9 +43,9 @@ compute_c <- function(xi, t_sq, v, sigma){
   return(((1 - sqrt(sigma^2 / (2 * t_sq + sigma^2))) / v - 1) / (1 - xi))
 }
 
-
-## PART 2: Plot for `rho`, `c0`, and `c` as functions of `xi`
-##         for different values of `sigma`
+# %%
+# PART 2: Plot for `rho`, `c0`, and `c` as functions of `xi`
+#         for different values of `sigma`
 
 # set the values of `t_sq` and `v`
 t_sq <- 2
@@ -57,8 +58,8 @@ sigma_vec <- sigma_max * sqrt(2)^(-1 - 4 * seq(0, 3))
 # define the vector of value of `xi`
 corr_vec <- seq(0, 1, length.out = 21)
 
-
-## PART 2.1 : Plot for `rho`
+# %%
+# PART 2.1 : Plot for `rho`
 
 # obtain the values of `rho` for different values of `sigma` and `xi`
 rho_mat <- sapply(sigma_vec, function(sigma) compute_rho(corr_vec, t_sq, v, sigma), USE.NAMES = TRUE)
@@ -100,8 +101,8 @@ p_rho <- ggplot(rho_df, aes(x = corr, y = rho, color = sigma, shape = sigma)) +
 # save the plot as a png file
 fancy_png(plot = p_rho, out_path = "output/plots/par_vs_npar_rho_plot.png")
 
-
-## PART 2.2 : Plot for `c0`
+# %%
+# PART 2.2 : Plot for `c0`
 
 # obtain the values of `c0` for different values of `sigma` and `xi`
 c0_mat <- sapply(sigma_vec, function(sigma) compute_c0(corr_vec, t_sq, v, sigma), USE.NAMES = TRUE)
@@ -145,8 +146,8 @@ p_c0 <- ggplot(c0_df, aes(x = corr, y = c0, color = sigma, shape = sigma)) +
 # save the plot as a png file
 fancy_png(plot = p_c0, out_path = "output/plots/par_vs_npar_c0_plot.png")
 
-
-## PART 2.3 : Plot for `c`
+# %%
+# PART 2.3 : Plot for `c`
 
 # obtain the values of `c` for different values of `sigma` and `xi`
 c_mat <- sapply(sigma_vec, function(sigma) compute_c(corr_vec, t_sq, v, sigma), USE.NAMES = TRUE)
@@ -191,7 +192,8 @@ p_c <- ggplot(c_df, aes(x = corr, y = c, color = sigma, shape = sigma)) +
 fancy_png(plot = p_c, out_path = "output/plots/par_vs_npar_c_plot.png")
 
 
-## PART 3 : Data generation
+# %%
+# PART 3 : Data generation
 
 # set the values of `t_sq` and `v`
 t_sq <- 2
@@ -243,13 +245,14 @@ cases <- length(xi_vec)
 write.csv(seen, file = "output/results/par_vs_npar_seen.csv", row.names = FALSE)
 
 
-## PART 4 : Computation of kernel correlation
+# %%
+# PART 4 : Computation of kernel correlation
 
 # import the `seen` matrix from the previous step
 seen <- as.matrix(read.csv("output/results/par_vs_npar_seen.csv"))
 
-
-## PART 4.1 : Gaussian example
+# %%
+# PART 4.1 : Gaussian example
 
 # allocate the data frame to save the samples for the gaussian example
 X_gau <- data.frame(X = numeric(0),
@@ -292,8 +295,8 @@ for (i in seq_len(cases)) {
 # save the samples for the Gaussian example
 write.csv(X_gau, file = "output/results/par_vs_npar_X_gau.csv", row.names = FALSE)
 
-
-## PART 4.2 : Hierarchical Dirichlet Process
+# %%
+# PART 4.2 : Hierarchical Dirichlet Process
 
 if (n1 != 0 || n2 != 0) {
   seen_q1_mat <- lapply(n1_all, FUN = function(times) {rep(1, times)})
@@ -373,7 +376,8 @@ for (i in seq_len(cases)) {
 write.csv(X_hdp, file = "output/results/par_vs_npar_X_hdp.csv", row.names = FALSE)
 
 
-## PART 5 : Plots of the mean posterior predictive distributions
+# %%
+# PART 5 : Plots of the mean posterior predictive distributions
 
 # import the `X_gau` and `X_hdp` data frames from the previous step
 X_gau <- read.csv("output/results/par_vs_npar_X_gau.csv")
@@ -408,7 +412,6 @@ for (i in seq_len(cases)) {
   # save the plot as a png file
   fancy_png(plot = p1, out_path = paste("output/plots/par_vs_npar_gau", corr, ".png", sep = ""))
 
-
   # plot the distribution of the sample corresponding to the value of
   # kernel correlation under investigation for the hDP
   p2 <- ggplot(subset(X_hdp, Corr == as.character(corr)), aes(x = X, y = after_stat(density), color = Group, linetype = Group)) +
@@ -435,9 +438,10 @@ for (i in seq_len(cases)) {
 }
 
 
-## PART 6: Tile plot of the absolute distances of the means
-##         between the mean posterior predictive distributions
-##         of the second group
+# %%
+# PART 6: Tile plot of the absolute distances of the means
+#         between the mean posterior predictive distributions
+#         of the second group
 
 # allocate the data frame to store all couples of kernel correlation values
 corr_df <- expand.grid(corr1 = as.factor(xi_vec), corr2 = as.factor(xi_vec))
@@ -494,7 +498,6 @@ p <- ggplot(gauVSgau_df, aes(x = corr1, y = corr2, fill = value)) +
 # save the plot as a png file
 fancy_png(plot = p, out_path = "output/plots/par_vs_npar_gauVSgau.png")
 
-
 # make a tile plot comparing cases within the hDP
 p <- ggplot(hdpVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
   geom_tile(color = "white", linewidth = 2) +
@@ -517,7 +520,6 @@ p <- ggplot(hdpVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
 
 # save the plot as a png file
 fancy_png(plot = p, out_path = "output/plots/par_vs_npar_hdpVShdp.png")
-
 
 # make a tile plot comparing cases within the hDP
 p <- ggplot(gauVShdp_df, aes(x = corr1, y = corr2, fill = value)) +

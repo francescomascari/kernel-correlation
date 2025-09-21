@@ -42,7 +42,7 @@ compute_c <- function(xi, t_sq, v, sigma){
   return(((1 - sqrt(sigma^2 / (2 * t_sq + sigma^2))) / v - 1) / (1 - xi))
 }
 
-
+# %%
 ## PART 2 : Data upload and kernel correlation computation
 
 # set the values of `t_sq` and `v`
@@ -116,8 +116,8 @@ xi_vec <- c(0.01, 0.50, 0.99)
 # store the total number of cases
 cases <- length(xi_vec)
 
-
-## PART 2.1 : Gaussian example
+# %%
+# PART 2.1 : Gaussian example
 
 # allocate the data frame to save the samples for the gaussian example
 X_gau <- data.frame(X = numeric(0),
@@ -160,8 +160,8 @@ for (i in seq_len(cases)) {
 # save the samples for the Gaussian example
 write.csv(X_gau, file = "output/results/penguins_X_gau.csv", row.names = FALSE)
 
-
-## PART 2.2 : Hierarchical Dirichlet Process
+# %%
+# PART 2.2 : Hierarchical Dirichlet Process
 if (n1 != 0 || n2 != 0) {
   seen_q1_mat <- lapply(n1_all, FUN = function(times) {rep(1, times)})
   seen_q2_mat <- lapply(n2_all, FUN = function(times) {rep(1, times)})
@@ -240,7 +240,8 @@ for (i in seq_len(cases)) {
 write.csv(X_hdp, file = "output/results/penguins_X_hdp.csv", row.names = FALSE)
 
 
-## PART 5 : Plots of the mean posterior predictive distributions
+# %%
+# PART 3 : Plots of the mean posterior predictive distributions
 
 # import the `X_gau` and `X_hdp` data frames from the previous step
 X_gau <- read.csv("output/results/penguins_X_gau.csv")
@@ -275,7 +276,6 @@ for (i in seq_len(cases)) {
   # save the plot as a png file
   fancy_png(plot = p1, out_path = paste("output/plots/penguins_gau", corr, ".png", sep = ""))
 
-
   # plot the distribution of the sample corresponding to the value of
   # kernel correlation under investigation for the hDP
   p2 <- ggplot(subset(X_hdp, Corr == as.character(corr)), aes(x = X, y = after_stat(density), color = Group, linetype = Group)) +
@@ -302,9 +302,10 @@ for (i in seq_len(cases)) {
 }
 
 
-## PART 6: Tile plot of the absolute distances of the means
-##         between the mean posterior predictive distributions
-##         of the second group
+# %%
+# PART 4 : Tile plot of the absolute distances of the means
+#          between the mean posterior predictive distributions
+#          of the second group
 
 # allocate the data frame to store all couples of kernel correlation values
 corr_df <- expand.grid(corr1 = as.factor(xi_vec), corr2 = as.factor(xi_vec))
@@ -361,7 +362,6 @@ p <- ggplot(gauVSgau_df, aes(x = corr1, y = corr2, fill = value)) +
 # save the plot as a png file
 fancy_png(plot = p, out_path = "output/plots/penguins_gauVSgau.png")
 
-
 # make a tile plot comparing cases within the hDP
 p <- ggplot(hdpVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
   geom_tile(color = "white", linewidth = 2) +
@@ -384,7 +384,6 @@ p <- ggplot(hdpVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
 
 # save the plot as a png file
 fancy_png(plot = p, out_path = "output/plots/penguins_hdpVShdp.png")
-
 
 # make a tile plot comparing cases within the hDP
 p <- ggplot(gauVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
