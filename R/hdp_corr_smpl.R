@@ -45,7 +45,7 @@ hdp_corr_smpl <- function(
   n2_vec <- seen[, "Ncusts2"]
   n2 <- sum(n2_vec) # total number of customers for the second group
 
-  # initialize by assigning one table per each customer for each group
+  # initialize by assigning one table to each customer for each group
   seen_q1_mat <- lapply(n1_vec, FUN = function(times) {rep(1, times)})
   seen_q2_mat <- lapply(n2_vec, FUN = function(times) {rep(1, times)})
 
@@ -65,7 +65,7 @@ hdp_corr_smpl <- function(
   X22_vals <- c()
 
   for (. in seq_len(M)) {
-    # we impose the table disposition obained from the Gibbs update
+    # we impose the table disposition obtained from the Gibbs update
     seen_full <- cbind(seen, "Ntabs" = l_vec)
 
     # generate the 2x2 observations from the model with given `seen_full`
