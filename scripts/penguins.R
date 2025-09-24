@@ -9,7 +9,7 @@
 # - `c0`,`c` : concentration parameters of the hierarchical Dirichlet Process (hDP)
 # - `v`      : kernel variance a priori for each group in both cases
 # - `xi`     : kernel correlation a priori in both cases
-# - `sigma`  : parameter of the gaussian kernel
+# - `sigma`  : parameter of the Gaussian kernel
 
 # value of `s_sq` as a function of `t_sq`, `v`, and `sigma`
 compute_s_sq <- function(t_sq, v, sigma){
@@ -63,7 +63,7 @@ data(penguins)
 # Clean the penguins dataset
 penguins_clean <- penguins %>% drop_na()
 
-# create unbalanced datsaset
+# create an unbalanced dataset
 # Set a seed for reproducibility, so you get the same 10 females every time
 set.seed(40)
 
@@ -119,7 +119,7 @@ cases <- length(xi_vec)
 # %%
 # PART 2.1 : Gaussian example
 
-# allocate the data frame to save the samples for the gaussian example
+# allocate the data frame to save the samples for the Gaussian example
 X_gau <- data.frame(X = numeric(0),
                     Group = factor(levels = c("Group 1", "Group 2")),
                     Corr = factor(levels = as.character(xi_vec)))
@@ -187,7 +187,7 @@ for (i in seq_len(cases)) {
   X1_hdp <- c()
   X2_hdp <- c()
 
-  # initialize by assigning one table per each customer for each group
+  # initialize by assigning one table to each customer for each group
   seen_q1_mat <- lapply(n1_all, FUN = function(times) {rep(1, times)})
   seen_q2_mat <- lapply(n2_all, FUN = function(times) {rep(1, times)})
 
@@ -311,12 +311,12 @@ for (i in seq_len(cases)) {
 corr_df <- expand.grid(corr1 = as.factor(xi_vec), corr2 = as.factor(xi_vec))
 cases_cross <- cases^2
 
-# inizialize the vectors to store the absolute distances
+# initialize the vectors to store the absolute distances
 val_gauVSgau <- numeric(cases_cross)
 val_hdpVShdp <- numeric(cases_cross)
 val_gauVShdp <- numeric(cases_cross)
 
-# for every coupe of kernel correlation values
+# for every couple of kernel correlation values
 for (i in seq_len(cases_cross)){
 
   # extract the values of kernel correlations under investigation
@@ -359,7 +359,7 @@ p <- ggplot(gauVSgau_df, aes(x = corr1, y = corr2, fill = value)) +
     legend.position = "none"
   )
 
-# save the plot as a png file
+# save the plot as a PNG file
 fancy_png(plot = p, out_path = "output/plots/penguins_gauVSgau.png")
 
 # make a tile plot comparing cases within the hDP
@@ -382,7 +382,7 @@ p <- ggplot(hdpVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
     legend.position = "none"
   )
 
-# save the plot as a png file
+# save the plot as a PNG file
 fancy_png(plot = p, out_path = "output/plots/penguins_hdpVShdp.png")
 
 # make a tile plot comparing cases within the hDP
@@ -405,5 +405,5 @@ p <- ggplot(gauVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
     legend.position = "none"
   )
 
-# save the plot as a png file
+# save the plot as a PNG file
 fancy_png(plot = p, out_path = "output/plots/penguins_gauVShdp.png")
