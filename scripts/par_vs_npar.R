@@ -10,7 +10,7 @@
 # - `c0`,`c` : concentration parameters of the hierarchical Dirichlet Process (hDP)
 # - `v`      : kernel variance a priori for each group in both cases
 # - `xi`     : kernel correlation a priori in both cases
-# - `sigma`  : parameter of the gaussian kernel
+# - `sigma`  : parameter of the Gaussian kernel
 
 # value of `s_sq` as a function of `t_sq`, `v`, and `sigma`
 compute_s_sq <- function(t_sq, v, sigma){
@@ -55,7 +55,7 @@ v <- 1 / 4
 sigma_max <- sqrt(2 * t_sq / (1 / (1 - v)^2 - 1))
 sigma_vec <- sigma_max * sqrt(2)^(-1 - 4 * seq(0, 3))
 
-# define the vector of value of `xi`
+# define the vector of values of `xi`
 corr_vec <- seq(0, 1, length.out = 21)
 
 # %%
@@ -98,7 +98,7 @@ p_rho <- ggplot(rho_df, aes(x = corr, y = rho, color = sigma, shape = sigma)) +
         legend.title = element_blank(),
         legend.text = element_text(size = 30, face = "bold"))
 
-# save the plot as a png file
+# save the plot as a PNG file
 fancy_png(plot = p_rho, out_path = "output/plots/par_vs_npar_rho_plot.png")
 
 # %%
@@ -143,7 +143,7 @@ p_c0 <- ggplot(c0_df, aes(x = corr, y = c0, color = sigma, shape = sigma)) +
         legend.title = element_blank(),
         legend.text = element_text(size = 30, face = "bold"))
 
-# save the plot as a png file
+# save the plot as a PNG file
 fancy_png(plot = p_c0, out_path = "output/plots/par_vs_npar_c0_plot.png")
 
 # %%
@@ -188,7 +188,7 @@ p_c <- ggplot(c_df, aes(x = corr, y = c, color = sigma, shape = sigma)) +
         legend.title = element_blank(),
         legend.text = element_text(size = 30, face = "bold"))
 
-# save the plot as a png file
+# save the plot as a PNG file
 fancy_png(plot = p_c, out_path = "output/plots/par_vs_npar_c_plot.png")
 
 
@@ -254,7 +254,7 @@ seen <- as.matrix(read.csv("output/results/par_vs_npar_seen.csv"))
 # %%
 # PART 4.1 : Gaussian example
 
-# allocate the data frame to save the samples for the gaussian example
+# allocate the data frame to save the samples for the Gaussian example
 X_gau <- data.frame(X = numeric(0),
                     Group = factor(levels = c("Group 1", "Group 2")),
                     Corr = factor(levels = as.character(xi_vec)))
@@ -447,7 +447,7 @@ for (i in seq_len(cases)) {
 corr_df <- expand.grid(corr1 = as.factor(xi_vec), corr2 = as.factor(xi_vec))
 cases_cross <- cases^2
 
-# inizialize the vectors to store the absolute distances
+# initialize the vectors to store the absolute distances
 val_gauVSgau <- numeric(cases_cross)
 val_hdpVShdp <- numeric(cases_cross)
 val_gauVShdp <- numeric(cases_cross)
@@ -495,7 +495,7 @@ p <- ggplot(gauVSgau_df, aes(x = corr1, y = corr2, fill = value)) +
     legend.position = "none"
   )
 
-# save the plot as a png file
+# save the plot as a PNG file
 fancy_png(plot = p, out_path = "output/plots/par_vs_npar_gauVSgau.png")
 
 # make a tile plot comparing cases within the hDP
@@ -518,7 +518,7 @@ p <- ggplot(hdpVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
     legend.position = "none"
   )
 
-# save the plot as a png file
+# save the plot as a PNG file
 fancy_png(plot = p, out_path = "output/plots/par_vs_npar_hdpVShdp.png")
 
 # make a tile plot comparing cases within the hDP
@@ -541,5 +541,5 @@ p <- ggplot(gauVShdp_df, aes(x = corr1, y = corr2, fill = value)) +
     legend.position = "none"
   )
 
-# save the plot as a png file
+# save the plot as a PNG file
 fancy_png(plot = p, out_path = "output/plots/par_vs_npar_gauVShdp.png")
