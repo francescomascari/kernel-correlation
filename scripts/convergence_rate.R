@@ -133,5 +133,5 @@ p <- ggplot(data = plot_mat) +
         legend.title = element_blank(),
         legend.text = element_text(size = 30))
 
-# save the plot as a png file
+# save the plot as a PNG file
 fancy_png(plot = p, out_path = "output/plots/convergence_rate_plot.png")
