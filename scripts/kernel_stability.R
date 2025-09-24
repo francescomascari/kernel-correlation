@@ -12,7 +12,7 @@ cases <- length(n_all)
 # set the seed for reproducibility
 set.seed(1234)
 
-# generate all the data up to the maximal sample sixes
+# generate all the data up to the maximal sample sizes
 # for both groups
 seen <- hdp_XT_sampler(n1 = n_max, n2 = n_max, P00 = runif, smpl_method = "alt", start = 1, c0 = 1, c = 1)
 
@@ -26,7 +26,7 @@ write.csv(seen, file = "output/results/kernel_stability_seen.csv", row.names = F
 # import the `seen` matrix from the previous step
 seen <- as.matrix(read.csv("output/results/kernel_stability_seen.csv"))
 
-# inizialize the the matrix to store the values of the kernel correlation?
+# initialize the matrix to store the values of the kernel correlation?
 val_mat <- data.frame(n1 = n_all, n2 = n_all)
 val_mat$gaussian1 <- NA
 val_mat$gaussian2 <- NA
@@ -52,7 +52,7 @@ reps <- 10
 # store the kernel name
 k <- "gaussian"
 
-# inizialize the different values of `sigma` for the Gaussian kernel
+# initialize the different values of `sigma` for the Gaussian kernel
 sigma_vec <- c(1e-3, 1e0, 1e3)
 sigma_cases <- length(sigma_vec)
 
@@ -91,7 +91,7 @@ for (j in seq_len(sigma_cases)) {
 # store the kernel name
 k <- "laplace"
 
-# inizialize the different values of `beta` for the Laplace kernel
+# initialize the different values of `beta` for the Laplace kernel
 beta_vec <- c(1e-3, 1e0, 1e3)
 beta_cases <- length(beta_vec)
 
@@ -130,7 +130,7 @@ for (j in seq_len(beta_cases)) {
 # store the kernel name
 k <- "setwise"
 
-# inizialize the different values of `right_lim` for the set-wise kernel
+# initialize the different values of `right_lim` for the set-wise kernel
 right_lim_vec <- c(.1, .5, .9)
 right_lim_cases <- length(right_lim_vec)
 
