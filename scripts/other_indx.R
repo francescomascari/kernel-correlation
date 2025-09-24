@@ -12,7 +12,7 @@ set.seed(1234)
 rho <- 1
 var_cov_mat <- matrix(c(1, rho, rho, 1), nrow = 2)
 
-# generate `n` independent realization of thetas
+# generate `n` independent realizations of thetas
 thetas <- rmvnorm(M, sigma = var_cov_mat)
 
 # generate one independent sample for each group for each realization of thetas
@@ -23,7 +23,7 @@ Y <- rnorm(M, mean = thetas[, 2], sd = 1)
 # %%
 # PART 2 : Computation of the indices
 
-# Build the matrix given by kernel evaluation and center them
+# Build the matrices given by kernel evaluation and center them
 K_XX <- do_outer_mat(X, X, "gaussian")
 K_XX_center <- sweep(sweep(K_XX, 1, rowMeans(K_XX), "-"), 2, colMeans(K_XX), "-") + mean(K_XX)
 K_YY <- do_outer_mat(Y, Y, "gaussian")
