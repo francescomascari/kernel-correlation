@@ -45,7 +45,7 @@ write.csv(df_val, file = "output/results/smpl_vs_anlys_df_val.csv", row.names = 
 
 
 # %%
-# PART 3 : Plot of the boxplots for the repetitions of the two algorithm
+# PART 3 : Plot of the boxplots for the repetitions of the two algorithms
 
 # import the `df_val` matrix from the previous step
 df_val <- read.csv("output/results/smpl_vs_anlys_df_val.csv")
@@ -75,7 +75,7 @@ p <- ggplot() +
             size = 7.5) +
   # set the color of the boxplot for each method
   scale_fill_manual(name = "Method", values = c("Analytics" = "firebrick", "Sampling" = "forestgreen")) +
-  # se the axis labels
+  # set the axis labels
   labs(x = NULL,
        y = "$\\mathbb{C}\\mathrm{orr}_{k}$") +
   # add a theme for better readability
@@ -84,5 +84,5 @@ p <- ggplot() +
   theme(axis.title = element_text(vjust = 0, size = 40),
         axis.text = element_text(size = 40))
 
-# save the plot as a png file
+# save the plot as a PNG file
 fancy_png(plot = p, out_path = "output/plots/smpl_vs_anlys_plot.png")
