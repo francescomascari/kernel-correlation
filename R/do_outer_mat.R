@@ -17,8 +17,8 @@ do_outer_mat <- function(
   #   kernel      : character – name of the kernel in use.
   #
   #   par_k       : list – parameters of `kernel`.
-  #                  sigma         – parameter of the gaussian kernel.
-  #                  beta          – parameter of the laplace kernel.
+  #                  sigma         – parameter of the Gaussian kernel.
+  #                  beta          – parameter of the Laplace kernel.
   #                  left_lim      – left limit of the reference interval
   #                                  of the set-wise kernel.
   #                  right_lim     – right limit of the reference interval
@@ -28,21 +28,21 @@ do_outer_mat <- function(
   #   numeric matrix – the matrix given by k(x,y)
   #                    for x in `vals1` and y in `vals2`.
 
-  # if `kernel` is gaussian
+  # if the kernel is Gaussian
   if (kernel == "gaussian") {
 
     # build the matrix with the corresponding kernel
     quad_mat <- exp(-outer(vals1, vals2, "-")^2 / (2 * par_k$sigma^2))
   }
 
-  # if `kernel` is laplace
+  # if the kernel is Laplace
   if (kernel == "laplace") {
 
     # build the matrix with the corresponding kernel
     quad_mat <- exp(-abs(outer(vals1, vals2, "-")) / par_k$beta)
   }
 
-  # if `kernel` is setwise
+  # if the kernel is set-wise
   if (kernel == "setwise") {
 
     # compute the indicator functions for `vals1` and `vals2`
@@ -53,7 +53,7 @@ do_outer_mat <- function(
     quad_mat <- outer(ind1, ind2)
   }
 
-  # if `kernel` is linear
+  # if the kernel is linear
   if (kernel == "linear") {
 
     # build the matrix with the corresponding kernel
