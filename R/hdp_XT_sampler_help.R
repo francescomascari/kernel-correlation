@@ -12,9 +12,9 @@ hdp_XT_sampler_help <- function(
   # If `seen_XT` is supplied, draws are conditional on the values in that matrix.
   # Sampling follows the Restaurant franchise scheme with table (cluster) indicators:
   #   * A new customer joins an existing table with prob. Ncusts / (c + Ncusts)
-  #   * Otherwise a new table is created.
+  #   * Otherwise, a new table is created.
   #       – The table serves an existing dish with prob. Ntabs / (c0 + Ntabs)
-  #       – Otherwise it introduces a brand-new dish from the baseline measure P00.
+  #       – Otherwise, it introduces a brand-new dish from the baseline measure P00.
   # The function updates the shared `seen_XT` matrix.
   # ---------------------------------------------------------------------------
   #
@@ -46,7 +46,7 @@ hdp_XT_sampler_help <- function(
   # for the data in the `seen_XT` matrix, record
   row_seen <- nrow(seen_XT) # number of rows
 
-  # create a matrix without duplicated tables
+  # create a matrix without duplicate tables
   # unique_seen_XT <- matrix(seen_XT[!duplicated(seen_XT[,"T"]), c("X","T")], ncol = 2, dimnames = list(NULL, c("X", "T")))
   unique_seen_XT <- seen_XT[!duplicated(seen_XT[, "T"]), c("X", "T"), drop = FALSE]
   n_tabs <- length(unique_seen_XT) # number of tables
