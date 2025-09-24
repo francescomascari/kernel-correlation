@@ -17,7 +17,7 @@ cases <- length(n1_all) * length(n2_all)
 # set the seed for reproducibility
 set.seed(1234)
 
-# generate all the data up to the maximal sample sixes
+# generate all the data up to the maximal sample sizes
 # for both groups
 seen <- hdp_XT_sampler(n1 = n1_max, n2 = n2_max, smpl_method = "alt", start = 1, c0 = 1, c = 1, P00 = runif)
 
@@ -36,7 +36,7 @@ seen <- as.matrix(read.csv("output/results/convergence_rate_seen.csv"))
 kernel_vec <- c("gaussian", "laplace", "setwise", "linear")
 par_k <- list(sigma = 1, beta = 1, left_lim = 0, right_lim = 0.95)
 
-# inizialize the matrix to store the values of the kernel correlation
+# initialize the matrix to store the values of the kernel correlation
 val_mat <- expand.grid(n1 = n1_all, n2 = n2_all)
 val_mat$gaussian <- NA
 val_mat$laplace <- NA
@@ -101,7 +101,7 @@ plot_mat <- pivot_longer(val_mat, cols = all_of(kernel_vec), names_to = "kernel"
   # with respect to the log of `n1 * n2`
   mutate(corr.smooth = exp(predict(lm(log(corr) ~ log(n1_n2)))))
 
-# make a log log plot of the values of the kernel correlation vs `n1 * n2`
+# make a log-log plot of the values of the kernel correlation vs `n1 * n2`
 p <- ggplot(data = plot_mat) +
   scale_x_continuous(trans = "log10") +
   scale_y_continuous(trans = "log10") +
