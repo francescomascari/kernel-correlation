@@ -409,7 +409,7 @@ for (i in seq_len(cases)) {
     xlim(c(-3.5, 3.5)) +
     ylim(c(0, 1))
 
-  # save the plot as a png file
+  # save the plot as a PNG file
   fancy_png(plot = p1, out_path = paste("output/plots/par_vs_npar_gau", corr, ".png", sep = ""))
 
   # plot the distribution of the sample corresponding to the value of
@@ -433,7 +433,7 @@ for (i in seq_len(cases)) {
     xlim(c(-5.5, 5.5)) +
     ylim(c(0, 1.25))
 
-  # save the plot as a png file
+  # save the plot as a PNG file
   fancy_png(plot = p2, out_path = paste("output/plots/par_vs_npar_hdp", corr, ".png", sep = ""))
 }
 
@@ -452,7 +452,7 @@ val_gauVSgau <- numeric(cases_cross)
 val_hdpVShdp <- numeric(cases_cross)
 val_gauVShdp <- numeric(cases_cross)
 
-# for every coupe of kernel correlation values
+# for every couple of kernel correlation values
 for (i in seq_len(cases_cross)){
 
   # extract the values of kernel correlations under investigation
