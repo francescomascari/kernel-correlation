@@ -57,7 +57,7 @@ gibbs_tabs <- function(
         # for the resulting disposition of customers and tables for the specified dish
         probs <- update_q_probs(q_vec, l_tot, l_vec[n_indx], c0 = c0, c = c)
 
-        # select the index of an existing table to assing the customer to
+        # select the index of an existing table to assign the customer to
         # according to the probabilities specified in `probs`
         # recall: 0 corresponds to a new table being created
         new_indx <- sample(0:length(q_vec), size = 1, prob = probs)
