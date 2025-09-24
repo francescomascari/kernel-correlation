@@ -273,7 +273,7 @@ for (i in seq_len(cases)) {
     xlim(c(175, 210)) +
     ylim(c(0, 0.75))
 
-  # save the plot as a png file
+  # save the plot as a PNG file
   fancy_png(plot = p1, out_path = paste("output/plots/penguins_gau", corr, ".png", sep = ""))
 
   # plot the distribution of the sample corresponding to the value of
@@ -297,7 +297,7 @@ for (i in seq_len(cases)) {
     xlim(c(160, 240)) +
     ylim(c(0, 0.2))
 
-    # save the plot as a png file
+    # save the plot as a PNG file
     fancy_png(plot = p2, out_path = paste("output/plots/penguins_hdp", corr, ".png", sep = ""))
 }
 
