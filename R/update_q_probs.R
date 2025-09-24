@@ -7,7 +7,7 @@ update_q_probs <- function(
   # ---------------------------------------------------------------------------
   # Compute the un-normalized probabilities for the distribution of one customer
   # across the tables for the same dish, given the other customers' allocations.
-  # Recall: the first entry corresponds to the probability to create a new table
+  # Recall: the first entry corresponds to the probability of creating a new table
   # ---------------------------------------------------------------------------
   #
   # Arguments:
@@ -33,7 +33,7 @@ update_q_probs <- function(
     return(c(1, rep(0, len_q)))
   }
 
-  # inizialize the vector of un-normalized probabilities
+  # initialize the vector of un-normalized probabilities
   un_probs <- rep(numeric(0), len_q + 1)
 
   # assign the un-normalized probability of a new table in log scale
@@ -44,7 +44,7 @@ update_q_probs <- function(
     un_probs[i + 1] <- log(q_vec_k[i])
   }
 
-  # normalize the probabilites
+  # normalize the probabilities
   probs <- exp(un_probs - logSumExp(un_probs))
 
   return(probs)
