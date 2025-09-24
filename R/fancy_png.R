@@ -28,7 +28,7 @@ fancy_png <- function(
   tmpdir <- tempfile("tikz_work")
   dir.create(tmpdir)
 
-  # inizialize the .tex and .pdf files
+  # initialize the .tex and .pdf files
   texfile <- file.path(tmpdir, "tmp_plot.tex")
   pdffile <- file.path(tmpdir, "tmp_plot.pdf")
 
