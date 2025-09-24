@@ -71,7 +71,7 @@ hdp_XT_sampler <- function(
 
     n_min <- min(n1, n2) # minimal number of values to sample
     n_max <- max(n1, n2) # maximal number of values to sample
-    max_indx <- which.max(c(n1, n2)) # group corresponding to the maximal number of values to samples
+    max_indx <- which.max(c(n1, n2)) # group corresponding to the maximal number of values to sample
     for (k in seq_len(n_min)) { # until we have to sample from both groups
       # sample one value from the first group
       seen_XT <- hdp_XT_sampler_help(1, group_indx = indx_1st, seen_XT = seen_XT, c0 = c0, c = c, P00 = P00)
