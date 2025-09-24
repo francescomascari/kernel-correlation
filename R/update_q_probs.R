@@ -7,7 +7,7 @@ update_q_probs <- function(
   # ---------------------------------------------------------------------------
   # Compute the un-normalized probabilities for the distribution of one customer
   # across the tables for the same dish, given the other customers' allocations.
-  # Recall: the first entry corresponds to the probability of creating a new table
+  # Recall: the first entry corresponds to the probability of creating a new table.
   # ---------------------------------------------------------------------------
   #
   # Arguments:
